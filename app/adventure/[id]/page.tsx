@@ -5,11 +5,9 @@ import ActionBar from "@/components/action-bar";
 import StoryStream from "@/components/story-stream";
 import RewindDialog from "@/components/rewind-dialog";
 import ActionInputDialog from "@/components/action-input-dialog";
-import { saveAdventure } from "@/lib/storage";
 import { useParams } from "next/navigation";
 import TopBar from "@/components/top-bar";
 import { getStory, submitTurn } from "@/lib/api/stories";
-import { Story } from "@/types/story";
 
 export type ActionType = "SYSTEM" | "DO" | "SAY" | "SEE" | "STORY";
 
@@ -30,16 +28,11 @@ export default function AdventurePage() {
 
   const [story, setStory] = useState<string[]>([]);
   const [stream, setStream] = useState<StreamItem[]>([]);
-  const [storyData, setStoryData] = useState<Story>();
   const [focusMode, setFocusMode] = useState(false);
 
   const [timelineEndToken, setTimelineEndToken] = useState<number>(0);
   const [rewindToken, setRewindToken] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<ActionType | null>(null);
-
-  /* ─────────────────────────────
-     LOAD STORY
-     ───────────────────────────── */
 
   useEffect(() => {
     const fetchStory = async () => {
@@ -52,7 +45,6 @@ export default function AdventurePage() {
 
         const lastToken = Math.max(...data.nodes.map((n) => n.tokenEnd));
 
-        setStoryData(data);
         setStory(paragraphs);
         setTimelineEndToken(lastToken);
 
@@ -69,8 +61,6 @@ export default function AdventurePage() {
 
     fetchStory();
   }, [id]);
-
-  /* ───────────────────────────── */
 
   return (
     <>
@@ -174,15 +164,6 @@ export default function AdventurePage() {
                     .split(" ").length;
 
                   setTimelineEndToken(newTokenCount);
-
-                  if (storyData) {
-                    saveAdventure({
-                      id,
-                      genre: storyData.genre,
-                      name: storyData.protagonist,
-                      updatedAt: Date.now(),
-                    });
-                  }
                 } finally {
                   setIsThinking(false);
                 }

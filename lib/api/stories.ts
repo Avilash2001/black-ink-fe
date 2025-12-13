@@ -1,10 +1,11 @@
 import { ActionType } from "@/app/adventure/[id]/page";
 import { api } from "./client";
-import type { Story } from "@/types/story";
+import type { Story, StoryListItem } from "@/types/story";
 
 export async function createStory(input: {
   genre: string;
   protagonist: string;
+  gender: string;
   matureEnabled: boolean;
 }) {
   return api<{
@@ -37,3 +38,14 @@ export async function submitTurn(
     body: JSON.stringify(input),
   });
 }
+
+export function getMyStories() {
+  return api<StoryListItem[]>("/stories/me");
+}
+
+export function deleteStory(storyId: string) {
+  return api<{ success: boolean }>(`/stories/${storyId}`, {
+    method: "DELETE",
+  });
+}
+

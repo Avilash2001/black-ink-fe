@@ -17,3 +17,11 @@ export interface Story {
   createdAt: string;
   nodes: StoryNode[];
 }
+
+export interface StoryListItem {
+  id: string;
+  genre: string;
+  protagonist: string;
+  createdAt: string;
+  updatedAt: string;
+}
