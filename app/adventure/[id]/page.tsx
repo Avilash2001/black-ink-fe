@@ -1,94 +1,195 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ActionBar from "@/components/action-bar";
 import StoryStream from "@/components/story-stream";
 import RewindDialog from "@/components/rewind-dialog";
 import ActionInputDialog from "@/components/action-input-dialog";
-import { submitTurn } from "@/lib/api";
 import { saveAdventure } from "@/lib/storage";
 import { useParams } from "next/navigation";
 import TopBar from "@/components/top-bar";
+import { getStory, submitTurn } from "@/lib/api/stories";
+import { Story } from "@/types/story";
 
-const INITIAL_STORY = [
-  "The forest is silent. The trees loom like ancient witnesses.",
-  "Somewhere in the dark, something shifts. Your name is Ash.",
-];
+export type ActionType = "SYSTEM" | "DO" | "SAY" | "SEE" | "STORY";
 
-export type ActionType = "DO" | "SAY" | "STORY" | "SEE";
+/* ───────────────────────────────────────────── */
+
+type StreamItem =
+  | { kind: "story"; text: string }
+  | { kind: "action"; action: ActionType; text: string };
+
+/* ───────────────────────────────────────────── */
 
 export default function AdventurePage() {
   const params = useParams();
   const id = params.id as string;
 
-  const [story, setStory] = useState(INITIAL_STORY);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isThinking, setIsThinking] = useState(false);
+
+  const [story, setStory] = useState<string[]>([]);
+  const [stream, setStream] = useState<StreamItem[]>([]);
+  const [storyData, setStoryData] = useState<Story>();
   const [focusMode, setFocusMode] = useState(false);
 
-  // Count total tokens initially
-  const totalTokens = story.join(" ").split(" ").length;
-
-  const [timelineEndToken, setTimelineEndToken] = useState<number>(totalTokens);
-
+  const [timelineEndToken, setTimelineEndToken] = useState<number>(0);
   const [rewindToken, setRewindToken] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<ActionType | null>(null);
+
+  /* ─────────────────────────────
+     LOAD STORY
+     ───────────────────────────── */
+
+  useEffect(() => {
+    const fetchStory = async () => {
+      try {
+        const data = await getStory(id);
+
+        const paragraphs = data.nodes.flatMap((node) =>
+          node.generatedText.split("\n\n")
+        );
+
+        const lastToken = Math.max(...data.nodes.map((n) => n.tokenEnd));
+
+        setStoryData(data);
+        setStory(paragraphs);
+        setTimelineEndToken(lastToken);
+
+        setStream(
+          paragraphs.map((p) => ({
+            kind: "story" as const,
+            text: p,
+          }))
+        );
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchStory();
+  }, [id]);
+
+  /* ───────────────────────────── */
 
   return (
     <>
       <TopBar focusMode={focusMode} />
 
       <div className="pb-32 pt-6" onDoubleClick={() => setFocusMode((f) => !f)}>
-        <StoryStream
-          paragraphs={story}
-          timelineEndToken={timelineEndToken}
-          onWordClick={setRewindToken}
-        />
+        {isLoading ? (
+          <div className="text-center text-neutral-400">Loading…</div>
+        ) : (
+          <>
+            {/* STORY + ACTION STREAM */}
+            <div className="space-y-8 max-w-prose mx-auto">
+              {stream.map((item, i) => {
+                if (item.kind === "action") {
+                  return (
+                    <div key={i} className="text-xs italic text-neutral-400">
+                      You {item.action.toLowerCase()}: “{item.text}”
+                    </div>
+                  );
+                }
 
-        <ActionBar onAction={setActiveAction} focusMode={focusMode} />
+                return (
+                  <StoryStream
+                    key={`story-${i}`}
+                    paragraphs={[item.text]}
+                    timelineEndToken={timelineEndToken}
+                    onWordClick={setRewindToken}
+                  />
+                );
+              })}
+            </div>
 
-        <RewindDialog
-          open={rewindToken !== null}
-          rewindToken={rewindToken}
-          story={story}
-          onCancel={() => setRewindToken(null)}
-          onConfirm={() => {
-            if (rewindToken !== null) {
-              setTimelineEndToken(rewindToken);
-            }
-            setRewindToken(null);
-          }}
-        />
+            {/* AI THINKING */}
+            {isThinking && (
+              <div className="mt-6 text-sm text-neutral-400 animate-pulse text-center">
+                The world is responding…
+              </div>
+            )}
 
-        <ActionInputDialog
-          action={activeAction}
-          onCancel={() => setActiveAction(null)}
-          onSubmit={async (text) => {
-            if (!activeAction) return;
+            {/* ACTION BAR */}
+            <ActionBar
+              onAction={setActiveAction}
+              focusMode={focusMode}
+              disabled={isThinking}
+            />
 
-            const res = await submitTurn({
-              action: activeAction,
-              text,
-              timelineEndToken,
-            });
+            {/* REWIND */}
+            <RewindDialog
+              open={rewindToken !== null}
+              rewindToken={rewindToken}
+              story={story}
+              onCancel={() => setRewindToken(null)}
+              onConfirm={() => {
+                if (rewindToken !== null) {
+                  setTimelineEndToken(rewindToken);
+                }
+                setRewindToken(null);
+              }}
+            />
 
-            setStory((prev) => [...prev, ...res.paragraphs]);
+            {/* ACTION INPUT */}
+            <ActionInputDialog
+              action={activeAction}
+              onCancel={() => setActiveAction(null)}
+              onSubmit={async (text) => {
+                if (!activeAction) return;
 
-            // Move timeline forward to the new end
-            const newTokenCount = [...story, ...res.paragraphs]
-              .join(" ")
-              .split(" ").length;
+                try {
+                  setIsThinking(true);
 
-            setTimelineEndToken(newTokenCount);
+                  // user action
+                  setStream((prev) => [
+                    ...prev,
+                    {
+                      kind: "action" as const,
+                      action: activeAction,
+                      text,
+                    },
+                  ]);
 
-            setActiveAction(null);
+                  setActiveAction(null);
 
-            saveAdventure({
-              id,
-              genre: "Unknown",
-              name: "Ash",
-              updatedAt: Date.now(),
-            });
-          }}
-        />
+                  const res = await submitTurn(id, {
+                    action: activeAction,
+                    text,
+                    rewindToken: timelineEndToken,
+                  });
+
+                  setStory((prev) => [...prev, ...res.paragraphs]);
+
+                  setStream((prev) => [
+                    ...prev,
+                    ...res.paragraphs.map((p) => ({
+                      kind: "story" as const,
+                      text: p,
+                    })),
+                  ]);
+
+                  const newTokenCount = [...story, ...res.paragraphs]
+                    .join(" ")
+                    .split(" ").length;
+
+                  setTimelineEndToken(newTokenCount);
+
+                  if (storyData) {
+                    saveAdventure({
+                      id,
+                      genre: storyData.genre,
+                      name: storyData.protagonist,
+                      updatedAt: Date.now(),
+                    });
+                  }
+                } finally {
+                  setIsThinking(false);
+                }
+              }}
+            />
+          </>
+        )}
       </div>
     </>
   );

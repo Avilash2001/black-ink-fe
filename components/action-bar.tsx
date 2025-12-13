@@ -8,9 +8,11 @@ const ACTIONS: ActionType[] = ["DO", "SAY", "STORY", "SEE"];
 export default function ActionBar({
   onAction,
   focusMode,
+  disabled,
 }: {
   onAction: (action: ActionType) => void;
   focusMode: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div
@@ -20,7 +22,12 @@ export default function ActionBar({
       ].join(" ")}
     >
       {ACTIONS.map((a) => (
-        <Button key={a} variant="secondary" onClick={() => onAction(a)}>
+        <Button
+          key={a}
+          variant="secondary"
+          disabled={disabled}
+          onClick={() => onAction(a)}
+        >
           {a}
         </Button>
       ))}

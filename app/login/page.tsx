@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { setSession } from "@/lib/storage";
+import { login } from "@/lib/api/auth";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -24,11 +25,9 @@ export default function LoginPage() {
         <Button
           disabled={!email.includes("@")}
           className="w-full"
-          onClick={() => {
-            setSession({
-              userId: crypto.randomUUID(),
-              email,
-            });
+          onClick={async () => {
+            const data = await login(email);
+            setSession(data);
             router.push("/");
           }}
         >

@@ -1,6 +1,10 @@
 import { ActionType } from "@/app/adventure/[id]/page";
 
 const ACTION_TEMPLATES: Record<ActionType, (input: string) => string[]> = {
+  SYSTEM: (input) => [
+    `System directive received: ${input}. The environment shifts accordingly.`,
+    `The underlying mechanics adjust to the new parameters set by the system.`,
+  ],
   DO: (input) => [
     `You decide to ${input}. The air feels heavier as you move.`,
     `Something unseen reacts to your action, shifting the balance of the moment.`,
@@ -19,10 +23,7 @@ const ACTION_TEMPLATES: Record<ActionType, (input: string) => string[]> = {
   ],
 };
 
-export function generateFakeTurn(
-  action: ActionType,
-  text: string,
-): string[] {
+export function generateFakeTurn(action: ActionType, text: string): string[] {
   const generator = ACTION_TEMPLATES[action];
   return generator(text);
 }

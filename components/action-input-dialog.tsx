@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ActionType } from "@/app/adventure/[id]/page";
 
 const LABELS: Record<ActionType, string> = {
+  SYSTEM: "System Action",
   DO: "What do you do?",
   SAY: "What do you say?",
   STORY: "How do you change the story?",
