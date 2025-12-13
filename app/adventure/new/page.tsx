@@ -69,7 +69,6 @@ export default function NewAdventurePage() {
           </div>
         </section>
 
-        {/* Name input */}
         <section className="space-y-2">
           <h2 className="text-sm uppercase tracking-wide text-neutral-400">
             Your Name
@@ -106,7 +105,6 @@ export default function NewAdventurePage() {
           </div>
         </section>
 
-        {/* CTA */}
         <div className="space-y-3">
           <Button
             size="lg"

@@ -71,7 +71,6 @@ export default function AdventurePage() {
           <div className="text-center text-neutral-400">Loading…</div>
         ) : (
           <>
-            {/* STORY + ACTION STREAM */}
             <div className="space-y-8 max-w-prose mx-auto">
               {stream.map((item, i) => {
                 if (item.kind === "action") {
@@ -93,21 +92,18 @@ export default function AdventurePage() {
               })}
             </div>
 
-            {/* AI THINKING */}
             {isThinking && (
               <div className="mt-6 text-sm text-neutral-400 animate-pulse text-center">
                 The world is responding…
               </div>
             )}
 
-            {/* ACTION BAR */}
             <ActionBar
               onAction={setActiveAction}
               focusMode={focusMode}
               disabled={isThinking}
             />
 
-            {/* REWIND */}
             <RewindDialog
               open={rewindToken !== null}
               rewindToken={rewindToken}
@@ -121,7 +117,6 @@ export default function AdventurePage() {
               }}
             />
 
-            {/* ACTION INPUT */}
             <ActionInputDialog
               action={activeAction}
               onCancel={() => setActiveAction(null)}
@@ -131,7 +126,6 @@ export default function AdventurePage() {
                 try {
                   setIsThinking(true);
 
-                  // user action
                   setStream((prev) => [
                     ...prev,
                     {

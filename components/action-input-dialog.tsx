@@ -43,7 +43,6 @@ function DialogBody({
   onCancel: () => void;
   onSubmit: (text: string) => void;
 }) {
-  // State is now scoped per-action render
   const [text, setText] = useState("");
 
   return (

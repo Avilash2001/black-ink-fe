@@ -6,7 +6,7 @@ export async function api<T>(
 ): Promise<T> {
   const res = await fetch(`${API_URL}${path}`, {
     ...options,
-    credentials: "include", // 👈 cookies
+    credentials: "include",
     headers: {
       "Content-Type": "application/json",
       ...(options.headers || {}),
