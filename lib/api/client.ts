@@ -9,12 +9,12 @@ export async function api<T>(
     credentials: "include",
     headers: {
       "Content-Type": "application/json",
-      ...(options.headers || {}),
+      ...(options.headers ?? {}),
     },
   });
 
   if (!res.ok) {
-    throw new Error(`API error: ${res.status}`);
+    throw new Error(await res.text());
   }
 
   return res.json();
