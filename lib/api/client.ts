@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://black-ink-be-production.up.railway.app";
 
 export async function api<T>(
   path: string,
