@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/api/auth";
 import { getSession } from "@/lib/storage";
@@ -9,25 +10,27 @@ export default function HomeBar() {
   const pathName = usePathname();
 
   if (pathName === "/" && !session) {
-    return;
+    return <></>;
   }
 
   return (
-    <div className="fixed top-0 inset-x-0 h-14 flex items-center justify-between px-4 bg-neutral-950 border-b border-neutral-800">
-      <div
-        className="text-sm font-medium cursor-pointer"
-        onClick={() => {
-          router.push("/");
-        }}
-      >
-        Black Ink
-      </div>
+    !(pathName === "/" && !session) && (
+      <div className="fixed top-0 inset-x-0 h-14 flex items-center justify-between px-4 bg-neutral-950 border-b border-neutral-800">
+        <div
+          className="text-sm font-medium cursor-pointer"
+          onClick={() => {
+            router.push("/");
+          }}
+        >
+          Black Ink
+        </div>
 
-      {session && (
-        <Button variant="ghost" onClick={logout}>
-          Logout
-        </Button>
-      )}
-    </div>
+        {session && (
+          <Button variant="ghost" onClick={logout}>
+            Logout
+          </Button>
+        )}
+      </div>
+    )
   );
 }
