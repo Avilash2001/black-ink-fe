@@ -33,7 +33,7 @@ export default function Home() {
   return (
     <>
       <HomeBar />
-      <main className="min-h-screen flex flex-col items-center justify-center gap-8">
+      <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-6">
         <h1 className="text-4xl font-semibold">Black Ink</h1>
 
         <p className="max-w-md text-center text-neutral-400">

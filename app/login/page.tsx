@@ -15,7 +15,7 @@ export default function LoginPage() {
   return (
     <>
       <HomeBar />
-      <main className="min-h-screen flex items-center justify-center">
+      <main className="min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-sm space-y-6 text-center">
           <h1 className="text-4xl font-semibold">Sign in to Black Ink</h1>
 

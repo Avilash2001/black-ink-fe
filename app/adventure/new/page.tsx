@@ -35,7 +35,7 @@ export default function NewAdventurePage() {
   return (
     <>
       <HomeBar />
-      <main className="min-h-screen flex flex-col justify-center gap-10 max-w-xl mx-auto px-4">
+      <main className="min-h-screen flex flex-col justify-center gap-10 max-w-xl mx-auto px-6">
         <header className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold">Start a New Adventure</h1>
           <p className="text-neutral-400">

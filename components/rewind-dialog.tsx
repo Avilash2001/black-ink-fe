@@ -52,7 +52,7 @@ export default function RewindDialog({
           <DialogTitle>Rewind story?</DialogTitle>
         </DialogHeader>
 
-        <div className="text-sm text-neutral-400 space-y-4 max-h-60 overflow-auto border border-neutral-800 rounded p-3">
+        <div className="text-sm text-neutral-400  space-y-4 max-h-60 overflow-auto border border-neutral-800 rounded p-3">
           {preview.map((p, i) => (
             <p key={i}>{p}</p>
           ))}

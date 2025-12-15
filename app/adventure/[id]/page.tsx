@@ -110,7 +110,7 @@ export default function AdventurePage() {
       <TopBar focusMode={focusMode} />
 
       {/* <div className="pb-32 pt-6" onDoubleClick={() => setFocusMode((f) => !f)}> */}
-      <div className="pb-32 pt-6">
+      <div className="pb-32 pt-6 px-6">
         {isLoading ? (
           <div className="text-center text-neutral-400">Loading…</div>
         ) : (
@@ -150,7 +150,7 @@ export default function AdventurePage() {
               disabled={isThinking}
             />
 
-            <RewindDialog
+            {/* <RewindDialog
               open={rewindToken !== null}
               rewindToken={rewindToken}
               story={story}
@@ -161,7 +161,7 @@ export default function AdventurePage() {
                 }
                 setRewindToken(null);
               }}
-            />
+            /> */}
 
             <ActionInputDialog
               action={activeAction}
