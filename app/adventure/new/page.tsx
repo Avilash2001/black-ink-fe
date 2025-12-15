@@ -10,18 +10,23 @@ import { getSettings } from "@/lib/settings";
 import HomeBar from "@/components/home-bar";
 
 const GENRES = [
-  "Fantasy",
-  "Sci-Fi",
-  "Horror",
-  "Mystery",
-  "Post-Apocalyptic",
-  "Dark Romance",
+  { title: "Fantasy", mature: false },
+  { title: "Sci-Fi", mature: false },
+  { title: "Horror", mature: false },
+  { title: "Mystery", mature: false },
+  { title: "Post-Apocalyptic", mature: false },
+  { title: "Crime Mystery", mature: false },
+  { title: "Historical Fiction", mature: false },
+  { title: "Adventure", mature: false },
+  { title: "Comedy", mature: false },
+  { title: "Dark Romance", mature: true },
+  { title: "Sex Story", mature: true },
+  { title: "Hentai", mature: true },
 ];
 
 export default function NewAdventurePage() {
   const settings = getSettings();
   const router = useRouter();
-
   const [name, setName] = useState("");
   const [genre, setGenre] = useState<string | null>(null);
   const [gender, setGender] = useState<string | null>(null);
@@ -36,7 +41,7 @@ export default function NewAdventurePage() {
   return (
     <>
       <HomeBar />
-      <main className="min-h-screen flex flex-col justify-center gap-10 max-w-xl mx-auto px-6">
+      <main className="min-h-screen flex flex-col justify-center gap-4 md:gap-10 max-w-xl mx-auto px-6">
         <header className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold">Start a New Adventure</h1>
           <p className="text-neutral-400">
@@ -50,27 +55,29 @@ export default function NewAdventurePage() {
             Genre
           </h2>
 
-          <div className="grid grid-cols-2 gap-3">
-            {GENRES.map((g) => (
+          <div className="grid grid-cols-3 gap-3">
+            {GENRES.filter(
+              ({ mature }) => !mature || settings.matureContent
+            ).map(({ title }) => (
               <button
-                key={g}
+                key={title}
                 disabled={isCreating}
-                onClick={() => setGenre(g)}
+                onClick={() => setGenre(title)}
                 className={[
-                  "border rounded-lg px-4 py-3 text-left transition-colors",
-                  genre === g
+                  "border rounded-lg px-4 py-3 text-center transition-colors",
+                  genre === title
                     ? "border-neutral-200 bg-neutral-900"
                     : "border-neutral-800 hover:bg-neutral-900",
                   isCreating && "opacity-50 pointer-events-none",
                 ].join(" ")}
               >
-                {g}
+                {title}
               </button>
             ))}
           </div>
         </section>
 
-        <section className="space-y-2">
+        <section className="space-y-4">
           <h2 className="text-sm uppercase tracking-wide text-neutral-400">
             Your Name
           </h2>
@@ -106,7 +113,7 @@ export default function NewAdventurePage() {
           </div>
         </section>
 
-        <div className="space-y-3">
+        <div className="space-y-3 text-center">
           <Button
             size="lg"
             disabled={!canStart}

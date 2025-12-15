@@ -28,8 +28,6 @@ export default function Home() {
     fetchAdventures();
   }, []);
 
-  console.log({ adventures });
-
   return (
     <>
       <HomeBar />

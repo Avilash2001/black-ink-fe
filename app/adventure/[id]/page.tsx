@@ -117,7 +117,6 @@ export default function AdventurePage() {
           <>
             <div className="space-y-8 max-w-prose mx-auto">
               {stream.map((item, i) => {
-                console.log({ item });
                 if (item.kind === "action") {
                   return (
                     <div key={i} className="text-xs italic text-neutral-400">

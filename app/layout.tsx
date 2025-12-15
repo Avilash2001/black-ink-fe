@@ -6,7 +6,6 @@ export const metadata: Metadata = {
   description: "A AI story adventure game",
 };
 
-
 export default function RootLayout({
   children,
 }: {
@@ -14,7 +13,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="dark">
-      <body className="bg-neutral-950 text-neutral-100">{children}</body>
+      <body
+        suppressHydrationWarning
+        className="bg-neutral-950 text-neutral-100"
+      >
+        {children}
+      </body>
     </html>
   );
 }
