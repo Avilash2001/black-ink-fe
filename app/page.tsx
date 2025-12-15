@@ -28,6 +28,8 @@ export default function Home() {
     fetchAdventures();
   }, []);
 
+  console.log({ adventures });
+
   return (
     <>
       <HomeBar />
@@ -60,8 +62,8 @@ export default function Home() {
 
                     {adventures.map((a) => (
                       <Link
-                        key={a.id}
-                        href={`/adventure/${a.id}`}
+                        key={a._id}
+                        href={`/adventure/${a._id}`}
                         className="flex justify-between items-center border border-neutral-800 rounded-lg p-3 hover:bg-neutral-900"
                       >
                         <div>
@@ -79,9 +81,9 @@ export default function Home() {
                             );
                             if (!ok) return;
 
-                            await deleteStory(a.id);
+                            await deleteStory(a._id);
                             setAdventures((prev) =>
-                              prev.filter((s) => s.id !== a.id)
+                              prev.filter((s) => s._id !== a._id)
                             );
                           }}
                         />

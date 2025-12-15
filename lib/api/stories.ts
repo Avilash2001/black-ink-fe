@@ -48,4 +48,3 @@ export function deleteStory(storyId: string) {
     method: "DELETE",
   });
 }
-

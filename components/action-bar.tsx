@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { ActionType } from "@/app/adventure/[id]/page";
 
-const ACTIONS: ActionType[] = ["DO", "SAY", "STORY", "SEE"];
+const ACTIONS: ActionType[] = ["DO", "SAY", "STORY", "SEE", "CONTINUE"];
 
 export default function ActionBar({
   onAction,

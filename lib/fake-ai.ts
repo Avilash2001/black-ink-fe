@@ -21,6 +21,9 @@ const ACTION_TEMPLATES: Record<ActionType, (input: string) => string[]> = {
     `You focus your attention on ${input}. Details emerge slowly.`,
     `What you notice changes how you understand the situation.`,
   ],
+  CONTINUE: () => [
+    `Continue the story`
+  ],
 };
 
 export function generateFakeTurn(action: ActionType, text: string): string[] {

@@ -19,7 +19,7 @@ export interface Story {
 }
 
 export interface StoryListItem {
-  id: string;
+  _id: string;
   genre: string;
   protagonist: string;
   createdAt: string;

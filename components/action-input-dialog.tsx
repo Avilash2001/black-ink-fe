@@ -18,6 +18,7 @@ const LABELS: Record<ActionType, string> = {
   SAY: "What do you say?",
   STORY: "How do you change the story?",
   SEE: "What do you focus on?",
+  CONTINUE: "Continue generating the story?",
 };
 
 export default function ActionInputDialog({
@@ -52,19 +53,24 @@ function DialogBody({
           <DialogTitle>{LABELS[action]}</DialogTitle>
         </DialogHeader>
 
-        <Textarea
-          autoFocus
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Type your intent..."
-          className="min-h-[120px]"
-        />
+        {action !== "CONTINUE" && (
+          <Textarea
+            autoFocus
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Type your intent..."
+            className="min-h-30"
+          />
+        )}
 
         <DialogFooter>
           <Button variant="ghost" onClick={onCancel}>
             Cancel
           </Button>
-          <Button disabled={!text.trim()} onClick={() => onSubmit(text.trim())}>
+          <Button
+            disabled={action !== "CONTINUE" && !text.trim()}
+            onClick={() => onSubmit(text.trim())}
+          >
             Continue
           </Button>
         </DialogFooter>

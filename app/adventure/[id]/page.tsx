@@ -9,7 +9,7 @@ import { useParams } from "next/navigation";
 import TopBar from "@/components/top-bar";
 import { getStory, submitTurn } from "@/lib/api/stories";
 
-export type ActionType = "SYSTEM" | "DO" | "SAY" | "SEE" | "STORY";
+export type ActionType = "SYSTEM" | "DO" | "SAY" | "SEE" | "STORY" | "CONTINUE";
 
 /* ───────────────────────────────────────────── */
 
@@ -62,21 +62,67 @@ export default function AdventurePage() {
     fetchStory();
   }, [id]);
 
+  const handleSubmitTurn = async (text: string) => {
+    if (!activeAction) return;
+
+    try {
+      setIsThinking(true);
+
+      setStream((prev) => [
+        ...prev,
+        {
+          kind: "action" as const,
+          action: activeAction,
+          text,
+        },
+      ]);
+
+      setActiveAction(null);
+
+      const res = await submitTurn(id, {
+        action: activeAction,
+        text,
+        rewindToken: timelineEndToken,
+      });
+
+      setStory((prev) => [...prev, ...res.paragraphs]);
+
+      setStream((prev) => [
+        ...prev,
+        ...res.paragraphs.map((p) => ({
+          kind: "story" as const,
+          text: p,
+        })),
+      ]);
+
+      const newTokenCount = [...story, ...res.paragraphs]
+        .join(" ")
+        .split(" ").length;
+
+      setTimelineEndToken(newTokenCount);
+    } finally {
+      setIsThinking(false);
+    }
+  };
+
   return (
     <>
       <TopBar focusMode={focusMode} />
 
-      <div className="pb-32 pt-6" onDoubleClick={() => setFocusMode((f) => !f)}>
+      {/* <div className="pb-32 pt-6" onDoubleClick={() => setFocusMode((f) => !f)}> */}
+      <div className="pb-32 pt-6">
         {isLoading ? (
           <div className="text-center text-neutral-400">Loading…</div>
         ) : (
           <>
             <div className="space-y-8 max-w-prose mx-auto">
               {stream.map((item, i) => {
+                console.log({ item });
                 if (item.kind === "action") {
                   return (
                     <div key={i} className="text-xs italic text-neutral-400">
-                      You {item.action.toLowerCase()}: “{item.text}”
+                      You {item.action.toLowerCase()}
+                      {item.action !== "CONTINUE" && `: “${item.text}”`}
                     </div>
                   );
                 }
@@ -120,48 +166,7 @@ export default function AdventurePage() {
             <ActionInputDialog
               action={activeAction}
               onCancel={() => setActiveAction(null)}
-              onSubmit={async (text) => {
-                if (!activeAction) return;
-
-                try {
-                  setIsThinking(true);
-
-                  setStream((prev) => [
-                    ...prev,
-                    {
-                      kind: "action" as const,
-                      action: activeAction,
-                      text,
-                    },
-                  ]);
-
-                  setActiveAction(null);
-
-                  const res = await submitTurn(id, {
-                    action: activeAction,
-                    text,
-                    rewindToken: timelineEndToken,
-                  });
-
-                  setStory((prev) => [...prev, ...res.paragraphs]);
-
-                  setStream((prev) => [
-                    ...prev,
-                    ...res.paragraphs.map((p) => ({
-                      kind: "story" as const,
-                      text: p,
-                    })),
-                  ]);
-
-                  const newTokenCount = [...story, ...res.paragraphs]
-                    .join(" ")
-                    .split(" ").length;
-
-                  setTimelineEndToken(newTokenCount);
-                } finally {
-                  setIsThinking(false);
-                }
-              }}
+              onSubmit={handleSubmitTurn}
             />
           </>
         )}
