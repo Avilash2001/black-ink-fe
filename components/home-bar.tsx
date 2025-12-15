@@ -1,7 +1,7 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { logout } from "@/lib/api/auth";
-import { getSession } from "@/lib/storage";
+import { clearSession, getSession } from "@/lib/storage";
 import { usePathname, useRouter } from "next/navigation";
 
 export default function HomeBar() {
@@ -26,7 +26,14 @@ export default function HomeBar() {
         </div>
 
         {session && (
-          <Button variant="ghost" onClick={logout}>
+          <Button
+            variant="ghost"
+            onClick={async () => {
+              await logout();
+              clearSession();
+              router.push("/login");
+            }}
+          >
             Logout
           </Button>
         )}

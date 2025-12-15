@@ -28,6 +28,7 @@ export default function NewAdventurePage() {
   const [isCreating, setIsCreating] = useState(false);
 
   const session = getSession();
+
   if (!session) redirect("/login");
 
   const canStart = name.trim().length > 0 && genre && gender && !isCreating;

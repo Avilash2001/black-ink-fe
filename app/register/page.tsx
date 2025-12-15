@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { register, login } from "@/lib/api/auth";
 import { setSession } from "@/lib/storage";
-import { login } from "@/lib/api/auth";
 import HomeBar from "@/components/home-bar";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   const router = useRouter();
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -21,7 +22,13 @@ export default function LoginPage() {
       <HomeBar />
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-sm space-y-6 text-center">
-          <h1 className="text-4xl font-semibold">Sign in to Black Ink</h1>
+          <h1 className="text-4xl font-semibold">Create your account</h1>
+
+          <Input
+            placeholder="Your name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
 
           <Input
             placeholder="you@example.com"
@@ -39,28 +46,29 @@ export default function LoginPage() {
           {error && <p className="text-sm text-red-500">{error}</p>}
 
           <Button
-            disabled={!email || !password || loading}
+            disabled={!name || !email || !password || loading}
             className="w-full"
             onClick={async () => {
               try {
                 setLoading(true);
-                const data = await login(email, password);
-                setSession(data);
+                await register(name, email, password);
+                const session = await login(email, password);
+                setSession(session);
                 router.push("/");
               } catch {
-                setError("Invalid email or password");
+                setError("Email already registered");
               } finally {
                 setLoading(false);
               }
             }}
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Creating account…" : "Register"}
           </Button>
 
           <p className="text-sm text-neutral-400">
-            New here?{" "}
-            <Link href="/register" className="underline">
-              Create an account
+            Already have an account?{" "}
+            <Link href="/login" className="underline">
+              Sign in
             </Link>
           </p>
         </div>
