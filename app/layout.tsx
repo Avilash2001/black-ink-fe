@@ -1,4 +1,11 @@
+import { Metadata } from "next";
 import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Black Ink",
+  description: "A AI story adventure game",
+};
+
 
 export default function RootLayout({
   children,
