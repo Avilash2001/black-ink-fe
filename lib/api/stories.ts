@@ -1,6 +1,6 @@
 import { ActionType } from "@/app/adventure/[id]/page";
 import { api } from "./client";
-import type { Story, StoryListItem } from "@/types/story";
+import type { Story, StoryListItem, StoryNode } from "@/types/story";
 
 export async function createStory(input: {
   genre: string;
@@ -30,7 +30,7 @@ export async function submitTurn(
   }
 ) {
   return api<{
-    paragraphs: string[];
+    node: StoryNode;
     tokenStart: number;
     tokenEnd: number;
   }>(`/stories/${storyId}/turn`, {

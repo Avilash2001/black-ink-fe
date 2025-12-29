@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import ActionBar from "@/components/action-bar";
 import StoryStream from "@/components/story-stream";
 // import RewindDialog from "@/components/rewind-dialog";
@@ -44,8 +44,6 @@ export default function AdventurePage() {
     fetchStory();
   }, [id]);
 
-  console.log(stream);
-
   const handleSubmitTurn = async (text: string) => {
     if (!activeAction) return;
 
@@ -62,11 +60,11 @@ export default function AdventurePage() {
 
       setStream((prev) => [
         ...prev,
-        ...res.paragraphs.map((p) => ({
-          action: activeAction,
-          text: p,
-          userAction: text,
-        })),
+        {
+          action: res.node.actionType as ActionType,
+          text: res.node.generatedText,
+          userAction: res.node.userInput,
+        },
       ]);
     } finally {
       setIsThinking(false);
@@ -107,17 +105,17 @@ export default function AdventurePage() {
             <div className="space-y-8 max-w-prose mx-auto">
               {stream.map((item, i) => {
                 return (
-                  <>
+                  <React.Fragment key={i}>
                     {item.action !== "SYSTEM" && (
-                      <div key={i} className="text-xs italic text-neutral-400">
+                      <div className="text-xs italic text-neutral-400">
                         {getActionText({
                           action: item.action,
                           userAction: item.userAction,
                         })}
                       </div>
                     )}
-                    <StoryStream key={`story-${i}`} paragraphs={[item.text]} />
-                  </>
+                    <StoryStream paragraphs={[item.text]} />
+                  </React.Fragment>
                 );
               })}
             </div>
