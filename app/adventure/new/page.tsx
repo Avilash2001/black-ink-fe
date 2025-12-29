@@ -41,7 +41,7 @@ export default function NewAdventurePage() {
   return (
     <>
       <HomeBar />
-      <main className="min-h-screen flex flex-col justify-center gap-4 md:gap-10 max-w-xl mx-auto px-6">
+      <main className="min-h-[100dvh] flex flex-col justify-center gap-4 md:gap-10 max-w-xl mx-auto px-6 py-20 md:py-0">
         <header className="space-y-2 text-center">
           <h1 className="text-3xl font-semibold">Start a New Adventure</h1>
           <p className="text-neutral-400">
@@ -55,7 +55,7 @@ export default function NewAdventurePage() {
             Genre
           </h2>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
             {GENRES.filter(
               ({ mature }) => !mature || settings.matureContent
             ).map(({ title }) => (

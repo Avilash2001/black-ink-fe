@@ -99,7 +99,7 @@ export default function AdventurePage() {
   return (
     <>
       <TopBar />
-      <div className="pb-48 pt-6 px-6">
+      <div className="pb-64 pt-6 px-6">
         {isLoading ? (
           <div className="text-center text-neutral-400">Loading…</div>
         ) : (

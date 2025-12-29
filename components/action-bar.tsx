@@ -12,8 +12,8 @@ export default function ActionBar({
   disabled?: boolean;
 }) {
   return (
-    <div className="fixed bottom-0 md:bottom-6 left-1/2 -translate-x-1/2 w-full md:w-96 opacity-100">
-      <div className="bg-neutral-900/90 backdrop-blur border border-neutral-800 md:rounded-2xl p-3 space-y-3 shadow-xl">
+    <div className="fixed bottom-0 pb-safe md:bottom-6 left-1/2 -translate-x-1/2 w-full md:w-96 opacity-100 z-50">
+      <div className="bg-neutral-950/80 backdrop-blur-md border-t md:border border-neutral-800 md:rounded-2xl p-3 space-y-3 shadow-xl">
         {/* PRIMARY ACTION */}
         <Button
           size="lg"

@@ -59,7 +59,7 @@ function DialogBody({
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Type your intent..."
-            className="min-h-30"
+            className="min-h-30 text-base"
           />
         )}
 
