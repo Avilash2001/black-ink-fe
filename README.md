@@ -1,36 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🧙‍♂️ AI Adventure - Where Stories Come Alive into Reality ✨
 
-## Getting Started
+Welcome to **AI Adventure**! This is the frontend repository for a cutting-edge application that brings your wildest textual adventures to life using the power of Artificial Intelligence. Built with modern web technologies, this project aims to provide an immersive and dynamic storytelling experience.
 
-First, run the development server:
+## 🚀 What is this?
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+**AI Adventure** is a platform where users can generate, read, and interact with AI-crafted stories. Whether you're a dungeon master looking for inspiration, a writer seeking a co-pilot, or just someone who loves a good generated tale, this app is for you.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+We are part of the **Black Ink** ecosystem, pushing the boundaries of interactive media.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ The Stack
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+We use the freshest ingredients for our codebase:
 
-## Learn More
+- **Framework**: [Next.js 16](https://nextjs.org/) (App Router, Turbopack)
+- **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Icons**: [Lucide React](https://lucide.dev/)
+- **UI Components**: [Radix UI](https://www.radix-ui.com/)
+- **Package Manager**: `pnpm` (highly recommended!)
 
-To learn more about Next.js, take a look at the following resources:
+## 🏃‍♂️ Getting Started
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Want to run this locally? Let's go!
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Prerequisites
 
-## Deploy on Vercel
+- Node.js 20+
+- `pnpm` (or `npm`/`yarn`/`bun`)
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Installation
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+1.  **Clone the repo:**
+
+    ```bash
+    git clone https://github.com/Avilash2001/black-ink-fe.git
+    cd black-ink-fe
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    pnpm install
+    # or npm install
+    ```
+
+3.  **Configure Environment:**
+
+    Ensure your backend URL is correctly set. Check `lib/api/client.ts` to point to your local or hosted backend.
+
+    ```typescript
+    // Example in lib/api/client.ts
+    const API_URL = "http://localhost:3000"; // for local development
+    ```
+
+4.  **Run the development server:**
+
+    ```bash
+    pnpm dev
+    ```
+
+5.  Open [http://localhost:3000](http://localhost:3000) (or the port shown in your terminal, e.g., 3001) to start your adventure!
+
+## 🗺️ Project Structure
+
+Here's a quick tour of the castle:
+
+- `/app`: The heart of our application (Next.js App Router).
+  - `/adventure`: Where the magic happens - viewing and creating adventures.
+  - `/login` & `/register`: User authentication flows.
+- `/components`: Reusable UI blocks and spell components.
+- `/lib`: Helper functions, API clients, and ancient scrolls of wisdom.
+- `/public`: Static assets, images, and shiny things.
+
+## 🤝 Contributing
+
+We ❤️ contributors!
+
+Got a cool idea? Found a bug? Want to fix a typo?
+
+1.  Fork the repository.
+2.  Create a new branch (`git checkout -b feature/epic-feature`).
+3.  Commit your changes (`git commit -m 'Add epic feature'`).
+4.  Push to the branch (`git push origin feature/epic-feature`).
+5.  Open a Pull Request.
+
+Let's build the future of interactive storytelling together! 🚀
+
+---
+
+_Powered by Black Ink_ 🖋️
