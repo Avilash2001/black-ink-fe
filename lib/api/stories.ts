@@ -26,7 +26,7 @@ export async function submitTurn(
   input: {
     action: ActionType;
     text: string;
-    rewindToken: number;
+    rewindToken?: number;
   }
 ) {
   return api<{

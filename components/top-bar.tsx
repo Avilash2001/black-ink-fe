@@ -5,17 +5,12 @@ import { ArrowLeft, Settings } from "lucide-react";
 import { useState } from "react";
 import SettingsDialog from "@/components/settings-dialog";
 
-export default function TopBar({ focusMode }: { focusMode: boolean }) {
+export default function TopBar() {
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <div
-        className={[
-          "sticky top-0 z-20 backdrop-blur bg-neutral-950/70 border-b border-neutral-800 transition-opacity",
-          focusMode ? "opacity-0 pointer-events-none" : "opacity-100",
-        ].join(" ")}
-      >
+      <div className="sticky top-0 z-20 backdrop-blur bg-neutral-950/70 border-b border-neutral-800 transition-opacity opacity-100">
         <div className="max-w-prose mx-auto px-4 py-3 flex items-center justify-between">
           <Link
             href="/"

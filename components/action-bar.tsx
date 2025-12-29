@@ -6,21 +6,13 @@ import { ArrowRight, Hand, MessageCircle, Eye, Wand2 } from "lucide-react";
 
 export default function ActionBar({
   onAction,
-  focusMode,
   disabled,
 }: {
   onAction: (action: ActionType) => void;
-  focusMode: boolean;
   disabled?: boolean;
 }) {
   return (
-    <div
-      className={[
-        "fixed bottom-0 md:bottom-6 left-1/2 -translate-x-1/2",
-        "w-full md:w-96",
-        focusMode ? "opacity-0 pointer-events-none" : "opacity-100",
-      ].join(" ")}
-    >
+    <div className="fixed bottom-0 md:bottom-6 left-1/2 -translate-x-1/2 w-full md:w-96 opacity-100">
       <div className="bg-neutral-900/90 backdrop-blur border border-neutral-800 md:rounded-2xl p-3 space-y-3 shadow-xl">
         {/* PRIMARY ACTION */}
         <Button

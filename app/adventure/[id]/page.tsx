@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import ActionBar from "@/components/action-bar";
 import StoryStream from "@/components/story-stream";
-import RewindDialog from "@/components/rewind-dialog";
+// import RewindDialog from "@/components/rewind-dialog";
 import ActionInputDialog from "@/components/action-input-dialog";
 import { useParams } from "next/navigation";
 import TopBar from "@/components/top-bar";
@@ -11,13 +11,7 @@ import { getStory, submitTurn } from "@/lib/api/stories";
 
 export type ActionType = "SYSTEM" | "DO" | "SAY" | "SEE" | "STORY" | "CONTINUE";
 
-/* ───────────────────────────────────────────── */
-
-type StreamItem =
-  | { kind: "story"; text: string }
-  | { kind: "action"; action: ActionType; text: string };
-
-/* ───────────────────────────────────────────── */
+type StreamItem = { action: ActionType; text: string; userAction: string };
 
 export default function AdventurePage() {
   const params = useParams();
@@ -26,12 +20,8 @@ export default function AdventurePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isThinking, setIsThinking] = useState(false);
 
-  const [story, setStory] = useState<string[]>([]);
   const [stream, setStream] = useState<StreamItem[]>([]);
-  const [focusMode, setFocusMode] = useState(false);
 
-  const [timelineEndToken, setTimelineEndToken] = useState<number>(0);
-  const [rewindToken, setRewindToken] = useState<number | null>(null);
   const [activeAction, setActiveAction] = useState<ActionType | null>(null);
 
   useEffect(() => {
@@ -39,19 +29,11 @@ export default function AdventurePage() {
       try {
         const data = await getStory(id);
 
-        const paragraphs = data.nodes.flatMap((node) =>
-          node.generatedText.split("\n\n")
-        );
-
-        const lastToken = Math.max(...data.nodes.map((n) => n.tokenEnd));
-
-        setStory(paragraphs);
-        setTimelineEndToken(lastToken);
-
         setStream(
-          paragraphs.map((p) => ({
-            kind: "story" as const,
-            text: p,
+          data.nodes.map((p) => ({
+            action: p.actionType as ActionType,
+            text: p.generatedText,
+            userAction: p.userInput,
           }))
         );
       } finally {
@@ -62,54 +44,61 @@ export default function AdventurePage() {
     fetchStory();
   }, [id]);
 
+  console.log(stream);
+
   const handleSubmitTurn = async (text: string) => {
     if (!activeAction) return;
 
     try {
       setIsThinking(true);
 
-      setStream((prev) => [
-        ...prev,
-        {
-          kind: "action" as const,
-          action: activeAction,
-          text,
-        },
-      ]);
-
       setActiveAction(null);
 
       const res = await submitTurn(id, {
         action: activeAction,
         text,
-        rewindToken: timelineEndToken,
+        rewindToken: 0,
       });
-
-      setStory((prev) => [...prev, ...res.paragraphs]);
 
       setStream((prev) => [
         ...prev,
         ...res.paragraphs.map((p) => ({
-          kind: "story" as const,
+          action: activeAction,
           text: p,
+          userAction: text,
         })),
       ]);
-
-      const newTokenCount = [...story, ...res.paragraphs]
-        .join(" ")
-        .split(" ").length;
-
-      setTimelineEndToken(newTokenCount);
     } finally {
       setIsThinking(false);
     }
   };
 
+  const getActionText = ({
+    action,
+    userAction,
+  }: {
+    action: ActionType;
+    userAction: string;
+  }) => {
+    switch (action) {
+      case "DO":
+        return `You '${userAction}' `;
+      case "SAY":
+        return `You say '${userAction}'`;
+      case "SEE":
+        return `You see ${userAction}`;
+      case "STORY":
+        return `You shape the story`;
+      case "CONTINUE":
+        return "You continue with the story";
+      default:
+        return "";
+    }
+  };
+
   return (
     <>
-      <TopBar focusMode={focusMode} />
-
-      {/* <div className="pb-32 pt-6" onDoubleClick={() => setFocusMode((f) => !f)}> */}
+      <TopBar />
       <div className="pb-48 pt-6 px-6">
         {isLoading ? (
           <div className="text-center text-neutral-400">Loading…</div>
@@ -117,22 +106,18 @@ export default function AdventurePage() {
           <>
             <div className="space-y-8 max-w-prose mx-auto">
               {stream.map((item, i) => {
-                if (item.kind === "action") {
-                  return (
-                    <div key={i} className="text-xs italic text-neutral-400">
-                      You {item.action.toLowerCase()}
-                      {item.action !== "CONTINUE" && `: “${item.text}”`}
-                    </div>
-                  );
-                }
-
                 return (
-                  <StoryStream
-                    key={`story-${i}`}
-                    paragraphs={[item.text]}
-                    timelineEndToken={timelineEndToken}
-                    onWordClick={setRewindToken}
-                  />
+                  <>
+                    {item.action !== "SYSTEM" && (
+                      <div key={i} className="text-xs italic text-neutral-400">
+                        {getActionText({
+                          action: item.action,
+                          userAction: item.userAction,
+                        })}
+                      </div>
+                    )}
+                    <StoryStream key={`story-${i}`} paragraphs={[item.text]} />
+                  </>
                 );
               })}
             </div>
@@ -143,24 +128,7 @@ export default function AdventurePage() {
               </div>
             )}
 
-            <ActionBar
-              onAction={setActiveAction}
-              focusMode={focusMode}
-              disabled={isThinking}
-            />
-
-            {/* <RewindDialog
-              open={rewindToken !== null}
-              rewindToken={rewindToken}
-              story={story}
-              onCancel={() => setRewindToken(null)}
-              onConfirm={() => {
-                if (rewindToken !== null) {
-                  setTimelineEndToken(rewindToken);
-                }
-                setRewindToken(null);
-              }}
-            /> */}
+            <ActionBar onAction={setActiveAction} disabled={isThinking} />
 
             <ActionInputDialog
               action={activeAction}
