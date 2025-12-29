@@ -6,7 +6,7 @@ Welcome to **Black Inkk**! This is the frontend repository for a cutting-edge ap
 
 **Black Inkk** is a platform where users can generate, read, and interact with AI-crafted stories. Whether you're a dungeon master looking for inspiration, a writer seeking a co-pilot, or just someone who loves a good generated tale, this app is for you.
 
-We are part of the **Black Ink** ecosystem, pushing the boundaries of interactive media.
+We are part of the **Black Ink** ecosystem, pushing the boundaries of interactive media. Check out our [Backend Repository](https://github.com/Avilash2001/black-ink-be) to see the magic behind the curtains.
 
 ## 🛠️ The Stack
 
@@ -45,12 +45,13 @@ Want to run this locally? Let's go!
 
 3.  **Configure Environment:**
 
-    Ensure your backend URL is correctly set. Check `lib/api/client.ts` to point to your local or hosted backend.
+    Create a `.env` file in the root directory and add your backend URL:
 
-    ```typescript
-    // Example in lib/api/client.ts
-    const API_URL = "http://localhost:3000"; // for local development
+    ```bash
+    NEXT_PUBLIC_API_URL=http://localhost:3000
     ```
+
+    You can also point this to your production URL if needed.
 
 4.  **Run the development server:**
 
