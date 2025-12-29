@@ -1,10 +1,10 @@
-# 🧙‍♂️ AI Adventure - Where Stories Come Alive into Reality ✨
+# 🧙‍♂️ Black Inkk - Where Stories Come Alive into Reality ✨
 
-Welcome to **AI Adventure**! This is the frontend repository for a cutting-edge application that brings your wildest textual adventures to life using the power of Artificial Intelligence. Built with modern web technologies, this project aims to provide an immersive and dynamic storytelling experience.
+Welcome to **Black Inkk**! This is the frontend repository for a cutting-edge application that brings your wildest textual adventures to life using the power of Artificial Intelligence. Built with modern web technologies, this project aims to provide an immersive and dynamic storytelling experience.
 
 ## 🚀 What is this?
 
-**AI Adventure** is a platform where users can generate, read, and interact with AI-crafted stories. Whether you're a dungeon master looking for inspiration, a writer seeking a co-pilot, or just someone who loves a good generated tale, this app is for you.
+**Black Inkk** is a platform where users can generate, read, and interact with AI-crafted stories. Whether you're a dungeon master looking for inspiration, a writer seeking a co-pilot, or just someone who loves a good generated tale, this app is for you.
 
 We are part of the **Black Ink** ecosystem, pushing the boundaries of interactive media.
 
