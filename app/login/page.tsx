@@ -8,9 +8,11 @@ import { Input } from "@/components/ui/input";
 import { setSession } from "@/lib/storage";
 import { login } from "@/lib/api/auth";
 import HomeBar from "@/components/home-bar";
+import { useAuth } from "@/lib/auth-context";
 
 export default function LoginPage() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
@@ -44,8 +46,7 @@ export default function LoginPage() {
             onClick={async () => {
               try {
                 setLoading(true);
-                const data = await login(email, password);
-                setSession(data);
+                await signIn(email, password);
                 router.push("/");
               } catch {
                 setError("Invalid email or password");

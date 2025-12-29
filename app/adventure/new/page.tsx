@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { redirect, useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getSession } from "@/lib/storage";
 import { createStory } from "@/lib/api/stories";
 import { getSettings } from "@/lib/settings";
 import HomeBar from "@/components/home-bar";
+import { useAuth } from "@/lib/auth-context";
 
 const GENRES = [
   { title: "Fantasy", mature: false },
@@ -26,15 +26,20 @@ const GENRES = [
 
 export default function NewAdventurePage() {
   const settings = getSettings();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [name, setName] = useState("");
   const [genre, setGenre] = useState<string | null>(null);
   const [gender, setGender] = useState<string | null>(null);
   const [isCreating, setIsCreating] = useState(false);
 
-  const session = getSession();
+  useEffect(() => {
+    if (!isLoading && !user) {
+      router.push("/login");
+    }
+  }, [user, isLoading, router]);
 
-  if (!session) redirect("/login");
+  if (isLoading || !user) return null;
 
   const canStart = name.trim().length > 0 && genre && gender && !isCreating;
 

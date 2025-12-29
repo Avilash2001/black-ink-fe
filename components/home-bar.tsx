@@ -1,26 +1,25 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { logout } from "@/lib/api/auth";
-import { clearSession, getSession } from "@/lib/storage";
 import { Settings } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import SettingsDialog from "./settings-dialog";
+import { useAuth } from "@/lib/auth-context";
 
 export default function HomeBar() {
   const router = useRouter();
-  const session = getSession();
+  const { user, signOut } = useAuth();
   const pathName = usePathname();
 
   const [open, setOpen] = useState(false);
 
-  if (pathName === "/" && !session) {
+  if (pathName === "/" && !user) {
     return <></>;
   }
 
   return (
-    !(pathName === "/" && !session) && (
-      <div className="fixed top-0 inset-x-0 h-14 flex items-center justify-between px-4 bg-neutral-950 border-b border-neutral-800">
+    !(pathName === "/" && !user) && (
+      <div className="fixed top-0 inset-x-0 h-14 flex items-center justify-between px-4 bg-neutral-950 border-b border-neutral-800 z-50">
         <div
           className="text-sm font-medium cursor-pointer"
           onClick={() => {
@@ -39,13 +38,11 @@ export default function HomeBar() {
             <Settings size={18} />
           </button>
 
-          {session && (
+          {user && (
             <Button
               variant="ghost"
               onClick={async () => {
-                await logout();
-                clearSession();
-                router.push("/login");
+                await signOut();
               }}
             >
               Logout

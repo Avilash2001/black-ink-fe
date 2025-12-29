@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { register, login } from "@/lib/api/auth";
-import { setSession } from "@/lib/storage";
+import { register } from "@/lib/api/auth";
 import HomeBar from "@/components/home-bar";
+import { useAuth } from "@/lib/auth-context";
 
 export default function RegisterPage() {
   const router = useRouter();
+  const { signIn } = useAuth();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -52,8 +53,7 @@ export default function RegisterPage() {
               try {
                 setLoading(true);
                 await register(name, email, password);
-                const session = await login(email, password);
-                setSession(session);
+                await signIn(email, password);
                 router.push("/");
               } catch {
                 setError("Email already registered");

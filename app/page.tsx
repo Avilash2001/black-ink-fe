@@ -1,32 +1,34 @@
 "use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { getSession } from "@/lib/storage";
 import { useEffect, useState } from "react";
 import { deleteStory, getMyStories } from "@/lib/api/stories";
 import { StoryListItem } from "@/types/story";
 import { Trash } from "lucide-react";
 import HomeBar from "@/components/home-bar";
+import { useAuth } from "@/lib/auth-context";
 
 export default function Home() {
-  const session = getSession();
-
+  const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
   const [adventures, setAdventures] = useState<StoryListItem[]>([]);
 
   useEffect(() => {
+    if (!user) return; // Don't fetch if not logged in
+
     const fetchAdventures = async () => {
       try {
         const data = await getMyStories();
         setAdventures(data);
+      } catch (err) {
+        console.error("Failed to fetch stories", err);
       } finally {
         setIsLoading(false);
       }
     };
 
     fetchAdventures();
-  }, []);
+  }, [user]);
 
   return (
     <>
@@ -39,7 +41,7 @@ export default function Home() {
           choose your genre, and let the story unfold!
         </p>
 
-        {!session ? (
+        {!user ? (
           <Link href="/login">
             <Button size="lg">Sign In</Button>
           </Link>

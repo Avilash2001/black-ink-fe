@@ -21,3 +21,11 @@ export async function register(name: string, email: string, password: string) {
 export async function logout() {
   await api("/auth/logout", { method: "POST" });
 }
+
+export async function getMe() {
+  return api<{
+    id: string;
+    name: string;
+    email: string;
+  }>("/auth/me");
+}

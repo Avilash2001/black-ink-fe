@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/lib/auth-context";
 
 export const metadata: Metadata = {
   title: "Black Ink",
@@ -24,7 +25,7 @@ export default function RootLayout({
         suppressHydrationWarning
         className="bg-neutral-950 text-neutral-100"
       >
-        {children}
+        <AuthProvider>{children}</AuthProvider>
       </body>
     </html>
   );
