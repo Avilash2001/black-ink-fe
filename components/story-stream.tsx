@@ -11,7 +11,7 @@ export default function StoryStream({ paragraphs }: { paragraphs: string[] }) {
   }, [paragraphs.length]);
 
   return (
-    <div className="space-y-10 leading-relaxed text-lg max-w-prose mx-auto">
+    <div className="space-y-7 max-w-prose mx-auto story-prose">
       {paragraphs.map((text, i) => (
         <p key={i}>{text}</p>
       ))}

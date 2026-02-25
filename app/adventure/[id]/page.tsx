@@ -97,9 +97,9 @@ export default function AdventurePage() {
   return (
     <>
       <TopBar />
-      <div className="pb-64 pt-6 px-6">
+      <div className="pb-64 pt-8 px-6">
         {isLoading ? (
-          <div className="text-center text-neutral-400">Loading…</div>
+          <div className="text-center text-[oklch(0.40_0_0)] text-sm py-12">Loading…</div>
         ) : (
           <>
             <div className="space-y-8 max-w-prose mx-auto">
@@ -107,7 +107,7 @@ export default function AdventurePage() {
                 return (
                   <React.Fragment key={i}>
                     {item.action !== "SYSTEM" && (
-                      <div className="text-xs italic text-neutral-400">
+                      <div className="text-xs italic text-[oklch(0.48_0.06_74)] tracking-wide">
                         {getActionText({
                           action: item.action,
                           userAction: item.userAction,
@@ -121,7 +121,7 @@ export default function AdventurePage() {
             </div>
 
             {isThinking && (
-              <div className="mt-6 text-sm text-neutral-400 animate-pulse text-center">
+              <div className="mt-8 text-sm text-[oklch(0.50_0.07_74)] animate-pulse text-center tracking-wide">
                 The world is responding…
               </div>
             )}

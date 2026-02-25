@@ -1,6 +1,15 @@
 import { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
+import { Crimson_Pro } from "next/font/google";
+
+const crimsonPro = Crimson_Pro({
+  subsets: ["latin"],
+  variable: "--font-story",
+  weight: ["400", "600"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Black Ink",
@@ -23,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         suppressHydrationWarning
-        className="bg-neutral-950 text-neutral-100"
+        className={`${crimsonPro.variable} bg-background text-foreground antialiased`}
       >
         <AuthProvider>{children}</AuthProvider>
       </body>
