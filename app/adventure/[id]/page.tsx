@@ -3,8 +3,8 @@
 import React, { useEffect, useState } from "react";
 import ActionBar from "@/components/action-bar";
 import StoryStream from "@/components/story-stream";
-// import RewindDialog from "@/components/rewind-dialog";
 import ActionInputDialog from "@/components/action-input-dialog";
+import StoryInfoDialog, { StoryInfo } from "@/components/story-info-dialog";
 import { useParams } from "next/navigation";
 import TopBar from "@/components/top-bar";
 import { getStory, submitTurn } from "@/lib/api/stories";
@@ -21,6 +21,8 @@ export default function AdventurePage() {
   const [isThinking, setIsThinking] = useState(false);
 
   const [stream, setStream] = useState<StreamItem[]>([]);
+  const [storyInfo, setStoryInfo] = useState<StoryInfo | null>(null);
+  const [infoOpen, setInfoOpen] = useState(false);
 
   const [activeAction, setActiveAction] = useState<ActionType | null>(null);
 
@@ -36,6 +38,15 @@ export default function AdventurePage() {
             userAction: p.userInput,
           }))
         );
+
+        setStoryInfo({
+          genre: data.genre,
+          protagonist: data.protagonist,
+          gender: data.gender,
+          matureEnabled: data.matureEnabled,
+          createdAt: data.createdAt,
+          turnCount: data.nodes.filter((n) => n.actionType !== "SYSTEM").length,
+        });
       } finally {
         setIsLoading(false);
       }
@@ -66,6 +77,10 @@ export default function AdventurePage() {
           userAction: res.node.userInput,
         },
       ]);
+
+      setStoryInfo((prev) =>
+        prev ? { ...prev, turnCount: prev.turnCount + 1 } : prev
+      );
     } finally {
       setIsThinking(false);
     }
@@ -96,7 +111,7 @@ export default function AdventurePage() {
 
   return (
     <>
-      <TopBar />
+      <TopBar onInfo={() => setInfoOpen(true)} />
       <div className="pb-64 pt-8 px-6">
         {isLoading ? (
           <div className="text-center text-[oklch(0.40_0_0)] text-sm py-12">Loading…</div>
@@ -132,6 +147,12 @@ export default function AdventurePage() {
               action={activeAction}
               onCancel={() => setActiveAction(null)}
               onSubmit={handleSubmitTurn}
+            />
+
+            <StoryInfoDialog
+              open={infoOpen}
+              onClose={() => setInfoOpen(false)}
+              info={storyInfo}
             />
           </>
         )}

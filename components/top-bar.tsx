@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowLeft, Settings } from "lucide-react";
+import { ArrowLeft, Info, Settings } from "lucide-react";
 import { useState } from "react";
 import SettingsDialog from "@/components/settings-dialog";
 
-export default function TopBar() {
+export default function TopBar({ onInfo }: { onInfo?: () => void }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -20,13 +20,25 @@ export default function TopBar() {
             Exit
           </Link>
 
-          <button
-            onClick={() => setOpen(true)}
-            className="p-2 rounded-lg text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)] transition-all duration-200"
-            aria-label="Settings"
-          >
-            <Settings size={17} />
-          </button>
+          <div className="flex items-center gap-1">
+            {onInfo && (
+              <button
+                onClick={onInfo}
+                className="p-2 rounded-lg text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)] transition-all duration-200"
+                aria-label="Story info"
+              >
+                <Info size={17} />
+              </button>
+            )}
+
+            <button
+              onClick={() => setOpen(true)}
+              className="p-2 rounded-lg text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)] transition-all duration-200"
+              aria-label="Settings"
+            >
+              <Settings size={17} />
+            </button>
+          </div>
         </div>
       </div>
 
