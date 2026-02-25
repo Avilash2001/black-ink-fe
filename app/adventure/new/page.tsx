@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { createStory } from "@/lib/api/stories";
-import { getSettings } from "@/lib/settings";
 import HomeBar from "@/components/home-bar";
 import { useAuth } from "@/lib/auth-context";
 
@@ -25,7 +24,6 @@ const GENRES = [
 ];
 
 export default function NewAdventurePage() {
-  const settings = getSettings();
   const { user, isLoading } = useAuth();
   const router = useRouter();
   const [name, setName] = useState("");
@@ -41,6 +39,7 @@ export default function NewAdventurePage() {
 
   if (isLoading || !user) return null;
 
+  const matureEnabled = user.matureEnabled ?? false;
   const canStart = name.trim().length > 0 && genre && gender && !isCreating;
 
   return (
@@ -68,7 +67,7 @@ export default function NewAdventurePage() {
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
             {GENRES.filter(
-              ({ mature }) => !mature || settings.matureContent
+              ({ mature }) => !mature || matureEnabled
             ).map(({ title }) => (
               <button
                 key={title}
@@ -138,7 +137,7 @@ export default function NewAdventurePage() {
                   genre,
                   protagonist: name,
                   gender,
-                  matureEnabled: settings.matureContent,
+                  matureEnabled,
                 });
                 router.push(`/adventure/${res.storyId}`);
               } finally {

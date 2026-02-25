@@ -5,7 +5,6 @@ import {
   useContext,
   useEffect,
   useState,
-  useTransition,
 } from "react";
 import {
   getSession as getStoredSession,
@@ -13,7 +12,7 @@ import {
   clearSession as removeSession,
   Session,
 } from "./storage";
-import { login, logout, register, getMe } from "./api/auth";
+import { login, logout, register, getMe, updateMe } from "./api/auth";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
@@ -22,6 +21,7 @@ interface AuthContextType {
   signIn: typeof login;
   signUp: typeof register;
   signOut: () => Promise<void>;
+  updateMatureContent: (value: boolean) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -82,8 +82,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateMatureContent = async (value: boolean) => {
+    if (!user) return;
+
+    // Optimistic update — update state instantly before the API call
+    const prev = user;
+    const optimistic: Session = { ...user, matureEnabled: value };
+    setUser(optimistic);
+    storeSession(optimistic);
+
+    try {
+      const updated = await updateMe({ matureEnabled: value });
+      setUser(updated);
+      storeSession(updated);
+    } catch {
+      // Roll back on failure
+      setUser(prev);
+      storeSession(prev);
+    }
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent }}>
       {children}
     </AuthContext.Provider>
   );

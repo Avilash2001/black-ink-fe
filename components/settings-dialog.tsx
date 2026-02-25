@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
-import { getSettings, saveSettings } from "@/lib/settings";
+import { useAuth } from "@/lib/auth-context";
 
 export default function SettingsDialog({
   open,
@@ -18,16 +17,7 @@ export default function SettingsDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const [settings, setSettings] = useState(getSettings());
-
-  function update<K extends keyof typeof settings>(
-    key: K,
-    value: typeof settings[K],
-  ) {
-    const next = { ...settings, [key]: value };
-    setSettings(next);
-    saveSettings(next);
-  }
+  const { user, updateMatureContent } = useAuth();
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
@@ -39,12 +29,12 @@ export default function SettingsDialog({
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <Label htmlFor="mature">
-              Allow mature & explicit content
+              Allow mature &amp; explicit content
             </Label>
             <Switch
               id="mature"
-              checked={settings.matureContent}
-              onCheckedChange={(v) => update("matureContent", v)}
+              checked={user?.matureEnabled ?? false}
+              onCheckedChange={(v) => updateMatureContent(v)}
             />
           </div>
 

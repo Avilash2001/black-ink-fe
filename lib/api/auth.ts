@@ -5,6 +5,7 @@ export async function login(email: string, password: string) {
     id: string;
     name: string;
     email: string;
+    matureEnabled: boolean;
   }>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -27,5 +28,18 @@ export async function getMe() {
     id: string;
     name: string;
     email: string;
+    matureEnabled: boolean;
   }>("/auth/me");
+}
+
+export async function updateMe(patch: { matureEnabled?: boolean }) {
+  return api<{
+    id: string;
+    name: string;
+    email: string;
+    matureEnabled: boolean;
+  }>("/auth/me", {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
 }
