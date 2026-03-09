@@ -24,15 +24,19 @@ export default function RegisterPage() {
 
       {/* Atmospheric background */}
       <div className="pointer-events-none fixed inset-0 -z-10 overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full bg-[oklch(0.78_0.14_74/0.05)] blur-[130px]" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full bg-[oklch(0.79_0.165_78/0.06)] blur-[150px]" />
       </div>
 
       <main className="min-h-screen flex items-center justify-center px-6">
         <div className="w-full max-w-sm">
           <div className="glass-card rounded-2xl px-8 py-10 space-y-7">
-            <div className="text-center space-y-1.5">
+            {/* Wordmark + heading */}
+            <div className="text-center space-y-2">
+              <p className="text-xs font-semibold tracking-[0.22em] uppercase text-[oklch(0.79_0.165_78)]">
+                Black Ink
+              </p>
               <h1 className="text-3xl font-bold tracking-tight">Create account</h1>
-              <p className="text-sm text-[oklch(0.48_0_0)]">
+              <p className="text-sm text-[oklch(0.50_0_0)]">
                 Your adventure awaits
               </p>
             </div>
@@ -42,20 +46,20 @@ export default function RegisterPage() {
                 placeholder="Your name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/10%)] focus-visible:border-[oklch(0.78_0.14_74/60%)] focus-visible:ring-[oklch(0.78_0.14_74/20%)]"
+                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/9%)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
               />
               <Input
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/10%)] focus-visible:border-[oklch(0.78_0.14_74/60%)] focus-visible:ring-[oklch(0.78_0.14_74/20%)]"
+                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/9%)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
               />
               <Input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/10%)] focus-visible:border-[oklch(0.78_0.14_74/60%)] focus-visible:ring-[oklch(0.78_0.14_74/20%)]"
+                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/9%)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
               />
             </div>
 
@@ -65,7 +69,7 @@ export default function RegisterPage() {
 
             <Button
               disabled={!name || !email || !password || loading}
-              className="w-full h-11 text-base font-semibold shadow-[0_0_25px_oklch(0.78_0.14_74/0.3)] hover:shadow-[0_0_35px_oklch(0.78_0.14_74/0.45)] transition-shadow duration-300"
+              className="w-full h-11 text-base font-semibold amber-glow disabled:shadow-none transition-all duration-300"
               onClick={async () => {
                 try {
                   setLoading(true);
@@ -86,7 +90,7 @@ export default function RegisterPage() {
               Already have an account?{" "}
               <Link
                 href="/login"
-                className="text-[oklch(0.78_0.14_74)] hover:text-[oklch(0.88_0.14_74)] transition-colors underline-offset-2 hover:underline"
+                className="text-[oklch(0.79_0.165_78)] hover:text-[oklch(0.88_0.14_78)] transition-colors underline-offset-2 hover:underline"
               >
                 Sign in
               </Link>

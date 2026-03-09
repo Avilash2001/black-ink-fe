@@ -10,7 +10,7 @@ export default function TopBar({ onInfo }: { onInfo?: () => void }) {
 
   return (
     <>
-      <div className="sticky top-0 z-20 bg-[oklch(0.08_0.005_65/75%)] backdrop-blur-xl border-b border-[oklch(1_0_0/6%)]">
+      <div className="sticky top-0 z-20 bg-[oklch(0.07_0.008_65/80%)] backdrop-blur-xl border-b border-[oklch(1_0_0/6%)]">
         <div className="max-w-prose mx-auto px-5 py-3.5 flex items-center justify-between">
           <Link
             href="/"

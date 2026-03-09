@@ -13,11 +13,11 @@ export default function ActionBar({
 }) {
   return (
     <div className="fixed bottom-0 pb-safe md:bottom-6 left-1/2 -translate-x-1/2 w-full md:w-[400px] opacity-100 z-50">
-      <div className="bg-[oklch(0.08_0.005_65/88%)] backdrop-blur-xl border-t md:border border-[oklch(1_0_0/8%)] md:rounded-2xl p-3 space-y-2.5 shadow-2xl">
+      <div className="bg-[oklch(0.07_0.008_65/90%)] backdrop-blur-xl border-t md:border border-[oklch(1_0_0/8%)] md:rounded-2xl p-3 space-y-2.5 shadow-2xl">
         {/* PRIMARY ACTION */}
         <Button
           size="lg"
-          className="w-full text-base font-semibold flex items-center justify-center gap-2 shadow-[0_0_20px_oklch(0.78_0.14_74/0.25)] hover:shadow-[0_0_30px_oklch(0.78_0.14_74/0.4)] disabled:shadow-none transition-shadow duration-300"
+          className="w-full text-base font-semibold flex items-center justify-center gap-2 amber-glow disabled:shadow-none transition-all duration-300"
           disabled={disabled}
           onClick={() => onAction("CONTINUE")}
         >

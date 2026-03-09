@@ -1,9 +1,9 @@
 import { Metadata } from "next";
 import "./globals.css";
 import { AuthProvider } from "@/lib/auth-context";
-import { Crimson_Pro } from "next/font/google";
+import { Newsreader } from "next/font/google";
 
-const crimsonPro = Crimson_Pro({
+const newsreader = Newsreader({
   subsets: ["latin"],
   variable: "--font-story",
   weight: ["400", "600"],
@@ -32,7 +32,7 @@ export default function RootLayout({
     <html lang="en" className="dark">
       <body
         suppressHydrationWarning
-        className={`${crimsonPro.variable} bg-background text-foreground antialiased`}
+        className={`${newsreader.variable} bg-background text-foreground antialiased`}
       >
         <AuthProvider>{children}</AuthProvider>
       </body>
