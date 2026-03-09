@@ -13,6 +13,7 @@ export interface Story {
   id: string;
   genre: string;
   protagonist: string;
+  gender: string;
   matureEnabled: boolean;
   createdAt: string;
   nodes: StoryNode[];
