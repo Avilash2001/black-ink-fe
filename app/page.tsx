@@ -61,14 +61,21 @@ export default function Home() {
               </p>
             </div>
 
-            <Link href="/login">
-              <Button
-                size="lg"
-                className="px-12 text-base font-semibold amber-glow transition-all duration-300"
-              >
-                Begin Your Story
-              </Button>
-            </Link>
+            <div className="flex flex-col items-center gap-3">
+              <Link href="/login">
+                <Button
+                  size="lg"
+                  className="px-12 text-base font-semibold amber-glow transition-all duration-300"
+                >
+                  Begin Your Story
+                </Button>
+              </Link>
+              <Link href="/murdle">
+                <button className="px-8 py-2.5 rounded-lg text-sm font-bold uppercase tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
+                  Play Inkquest
+                </button>
+              </Link>
+            </div>
 
             <p className="text-xs text-[oklch(0.36_0_0)]">
               Free to start &mdash; no credit card required
@@ -111,14 +118,21 @@ export default function Home() {
             </div>
 
             {/* Start CTA */}
-            <Link href="/adventure/new" className="block">
-              <Button
-                size="lg"
-                className="w-full text-base font-semibold amber-glow transition-all duration-300"
-              >
-                Start New Adventure
-              </Button>
-            </Link>
+            <div className="space-y-2">
+              <Link href="/adventure/new" className="block">
+                <Button
+                  size="lg"
+                  className="w-full text-base font-semibold amber-glow transition-all duration-300"
+                >
+                  Start New Adventure
+                </Button>
+              </Link>
+              <Link href="/murdle" className="block">
+                <button className="w-full py-3 px-6 rounded-lg text-sm font-bold uppercase tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
+                  Play Inkquest
+                </button>
+              </Link>
+            </div>
 
             {/* Adventures list */}
             {isLoading ? (

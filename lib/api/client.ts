@@ -19,5 +19,6 @@ export async function api<T>(
     throw new Error(await res.text());
   }
 
-  return res.json();
+  const text = await res.text();
+  return text ? JSON.parse(text) : (undefined as T);
 }
