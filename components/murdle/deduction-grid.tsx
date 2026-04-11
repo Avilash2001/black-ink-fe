@@ -1,20 +1,14 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { MurdleGame } from "@/lib/api/murdle";
 
 type CellState = "" | "x" | "check" | "suspicion";
-
 const CYCLE: CellState[] = ["", "x", "check", "suspicion"];
+type GridPrefix = "weapon" | "location" | "motive" | "suspect";
 
-interface Props {
-  game: MurdleGame;
-  grid: Record<string, string>;
-  onChange: (grid: Record<string, string>) => void;
-  disabled?: boolean;
-}
+interface GridItem { name: string; color?: string; }
 
-// Suspect color map
 const SUSPECT_COLORS: Record<string, string> = {
   crimson: "#DC143C",
   blue: "#4169E1",
@@ -22,175 +16,351 @@ const SUSPECT_COLORS: Record<string, string> = {
   magenta: "#FF00FF",
 };
 
-function abbr(name: string, len = 4): string {
-  return name.slice(0, len).toUpperCase();
+// ── Emoji helpers ─────────────────────────────────────────────────────────────
+
+function getEmojiRaw(name: string, prefix: GridPrefix): string {
+  const n = name.toLowerCase();
+  if (prefix === "suspect") return "🕵️";
+  if (prefix === "weapon") {
+    if (
+      n.includes("dagger") ||
+      n.includes("knife") ||
+      n.includes("blade") ||
+      n.includes("sword")
+    )
+      return "🗡️";
+    if (
+      n.includes("opener") ||
+      n.includes("stiletto") ||
+      n.includes("lancet") ||
+      n.includes("scalpel")
+    )
+      return "🔪";
+    if (
+      n.includes("poison") ||
+      n.includes("tincture") ||
+      n.includes("vial") ||
+      n.includes("toxin") ||
+      n.includes("elixir")
+    )
+      return "🧪";
+    if (
+      n.includes("syringe") ||
+      n.includes("injection") ||
+      n.includes("needle")
+    )
+      return "💉";
+    if (
+      n.includes("gun") ||
+      n.includes("pistol") ||
+      n.includes("revolver") ||
+      n.includes("rifle")
+    )
+      return "🔫";
+    if (
+      n.includes("rope") ||
+      n.includes("garrote") ||
+      n.includes("wire") ||
+      n.includes("cord") ||
+      n.includes("string")
+    )
+      return "🪢";
+    if (n.includes("chain")) return "🔗";
+    if (n.includes("candlestick") || n.includes("candle")) return "🕯️";
+    if (n.includes("axe") || n.includes("hatchet") || n.includes("cleaver"))
+      return "🪓";
+    if (n.includes("wrench") || n.includes("spanner")) return "🔧";
+    if (n.includes("lead pipe") || n.includes("pipe")) return "🔩";
+    if (
+      n.includes("hammer") ||
+      n.includes("mallet") ||
+      n.includes("club") ||
+      n.includes("bludgeon") ||
+      n.includes("bat")
+    )
+      return "🔨";
+    if (n.includes("iron bar") || n.includes("iron rod")) return "🪛";
+    if (n.includes("arrow") || n.includes("bow")) return "🏹";
+    if (n.includes("book") || n.includes("tome")) return "📚";
+    if (
+      n.includes("crystal") ||
+      n.includes("gem") ||
+      n.includes("stone") ||
+      n.includes("paperweight")
+    )
+      return "💎";
+    if (n.includes("bottle") || n.includes("flask") || n.includes("decanter"))
+      return "🍾";
+    if (n.includes("vase") || n.includes("urn")) return "🏺";
+    if (n.includes("pen") || n.includes("quill")) return "🖊️";
+    if (n.includes("scissors") || n.includes("shears")) return "✂️";
+    if (
+      n.includes("statuette") ||
+      n.includes("figurine") ||
+      n.includes("statue")
+    )
+      return "🗿";
+    if (n.includes("clock") || n.includes("watch")) return "⌚";
+    if (n.includes("brass") || n.includes("bronze")) return "🥉";
+    if (n.includes("iron") || n.includes("metal")) return "🪝";
+    if (
+      n.includes("silk") ||
+      n.includes("scarf") ||
+      n.includes("cravat") ||
+      n.includes("tie")
+    )
+      return "🧣";
+    return "⚔️";
+  }
+  if (prefix === "location") {
+    if (n.includes("library") || n.includes("study") || n.includes("archive"))
+      return "📚";
+    if (
+      n.includes("garden") ||
+      n.includes("maze") ||
+      n.includes("hedge") ||
+      n.includes("greenhouse")
+    )
+      return "🌿";
+    if (n.includes("kitchen") || n.includes("pantry") || n.includes("dining"))
+      return "🍽️";
+    if (n.includes("observatory") || n.includes("telescope")) return "🔭";
+    if (
+      n.includes("cellar") ||
+      n.includes("wine") ||
+      n.includes("basement") ||
+      n.includes("vault")
+    )
+      return "🍷";
+    if (
+      n.includes("ballroom") ||
+      n.includes("salon") ||
+      n.includes("grand hall")
+    )
+      return "🏛️";
+    if (n.includes("bedroom") || n.includes("chamber") || n.includes("suite"))
+      return "🛏️";
+    if (n.includes("lab")) return "🔬";
+    if (n.includes("chapel") || n.includes("church") || n.includes("cathedral"))
+      return "⛪";
+    if (n.includes("tower") || n.includes("turret") || n.includes("roof"))
+      return "🗼";
+    if (n.includes("golf") || n.includes("course")) return "⛳";
+    if (
+      n.includes("boat") ||
+      n.includes("dock") ||
+      n.includes("harbor") ||
+      n.includes("pier")
+    )
+      return "⛵";
+    if (n.includes("stable") || n.includes("barn")) return "🐎";
+    if (n.includes("gallery") || n.includes("museum")) return "🖼️";
+    if (
+      n.includes("chateau") ||
+      n.includes("castle") ||
+      n.includes("manor") ||
+      n.includes("fortress")
+    )
+      return "🏰";
+    if (n.includes("forest") || n.includes("woods")) return "🌲";
+    if (n.includes("pool") || n.includes("bath")) return "🏊";
+    if (n.includes("corridor") || n.includes("hall") || n.includes("passage"))
+      return "🚪";
+    if (n.includes("clock tower")) return "🕰️";
+    return "🏠";
+  }
+  if (n.includes("jealous") || n.includes("envy") || n.includes("rage"))
+    return "💚";
+  if (
+    n.includes("greed") ||
+    n.includes("money") ||
+    n.includes("fortune") ||
+    n.includes("wealth") ||
+    n.includes("inherit")
+  )
+    return "💰";
+  if (
+    n.includes("debt") ||
+    n.includes("unpaid") ||
+    n.includes("owe") ||
+    n.includes("bankrupt")
+  )
+    return "💸";
+  if (
+    n.includes("revenge") ||
+    n.includes("vengeance") ||
+    n.includes("vendetta")
+  )
+    return "⚔️";
+  if (
+    n.includes("love") ||
+    n.includes("affair") ||
+    n.includes("romance") ||
+    n.includes("passion")
+  )
+    return "❤️";
+  if (n.includes("power") || n.includes("ambition") || n.includes("control"))
+    return "👑";
+  if (
+    n.includes("blackmail") ||
+    n.includes("silence") ||
+    n.includes("spy") ||
+    n.includes("eliminate")
+  )
+    return "🕵️";
+  if (n.includes("secret") || n.includes("expose") || n.includes("conceal"))
+    return "🤫";
+  if (n.includes("fear") || n.includes("protect") || n.includes("survival"))
+    return "🛡️";
+  if (n.includes("honor") || n.includes("pride") || n.includes("reputation"))
+    return "🏆";
+  if (
+    n.includes("patent") ||
+    n.includes("stolen") ||
+    n.includes("theft") ||
+    n.includes("steal") ||
+    n.includes("invention")
+  )
+    return "📜";
+  return "🎭";
 }
 
-function CellSymbol({ state }: { state: CellState }) {
+const WEAPON_FALLBACKS = [
+  "⚔️",
+  "🔪",
+  "🗡️",
+  "🪃",
+  "🪖",
+  "🧨",
+  "💣",
+  "🪤",
+  "🔩",
+  "🪛",
+];
+const LOCATION_FALLBACKS = [
+  "🏠",
+  "🏡",
+  "🏚️",
+  "🏗️",
+  "🗺️",
+  "🧭",
+  "🌉",
+  "🏟️",
+  "🏪",
+  "🏫",
+];
+const MOTIVE_FALLBACKS = [
+  "🎭",
+  "🎪",
+  "🎯",
+  "🎲",
+  "🎰",
+  "🃏",
+  "🎴",
+  "🎬",
+  "🎩",
+  "🎸",
+];
+const SUSPECT_FALLBACKS = [
+  "🕵️",
+  "👤",
+  "🧑",
+  "👩",
+  "🧔",
+  "👳",
+  "🎩",
+  "🦹",
+  "🧛",
+  "🧟",
+];
+
+function buildEmojiMap(
+  names: string[],
+  prefix: GridPrefix,
+): Map<string, string> {
+  const map = new Map<string, string>();
+  const used = new Set<string>();
+  const fallbacks =
+    prefix === "weapon"
+      ? WEAPON_FALLBACKS
+      : prefix === "location"
+        ? LOCATION_FALLBACKS
+        : prefix === "suspect"
+          ? SUSPECT_FALLBACKS
+          : MOTIVE_FALLBACKS;
+  let fi = 0;
+  for (const name of names) {
+    let e = getEmojiRaw(name, prefix);
+    if (used.has(e)) {
+      while (fi < fallbacks.length && used.has(fallbacks[fi])) fi++;
+      e = fi < fallbacks.length ? fallbacks[fi++] : "❓";
+    }
+    used.add(e);
+    map.set(name, e);
+  }
+  return map;
+}
+
+// ── Cell symbol ───────────────────────────────────────────────────────────────
+
+function CellSymbol({ state, size }: { state: CellState; size: number }) {
+  const fs = Math.max(10, size * 0.45);
   if (state === "check")
     return (
-      <span className="text-green-400 font-bold leading-none select-none">
+      <span
+        style={{
+          color: "#22c55e",
+          fontWeight: 800,
+          fontSize: fs,
+          lineHeight: 1,
+          userSelect: "none",
+        }}
+      >
         ✓
       </span>
     );
   if (state === "x")
     return (
-      <span className="text-[oklch(0.50_0_0)] font-bold leading-none select-none text-xs">
+      <span
+        style={{
+          color: "rgba(255,255,255,0.28)",
+          fontWeight: 800,
+          fontSize: fs,
+          lineHeight: 1,
+          userSelect: "none",
+        }}
+      >
         ✗
       </span>
     );
   if (state === "suspicion")
     return (
-      <span className="text-[oklch(0.65_0.22_27)] font-bold leading-none select-none">
+      <span
+        style={{
+          color: "#f97316",
+          fontWeight: 800,
+          fontSize: fs,
+          lineHeight: 1,
+          userSelect: "none",
+        }}
+      >
         ?
       </span>
     );
   return null;
 }
 
-interface SubGridProps {
-  rowLabel: string;
-  colLabel: string;
-  rows: { name: string; color?: string }[];
-  cols: { name: string; color?: string }[];
-  rowPrefix: string;
-  colPrefix: string;
-  grid: Record<string, string>;
-  onCell: (key: string) => void;
-  disabled?: boolean;
+function makeKey(rp: GridPrefix, ri: string, cp: GridPrefix, ci: string) {
+  return `${rp}_${ri}_${cp}_${ci}`;
 }
 
-function SubGrid({
-  rowLabel,
-  colLabel,
-  rows,
-  cols,
-  rowPrefix,
-  colPrefix,
-  grid,
-  onCell,
-  disabled,
-}: SubGridProps) {
-  const CELL = 22;
-  const ROW_HEADER = 52;
-  const COL_HEADER = 44;
-
-  return (
-    <div className="flex flex-col">
-      {/* Sub-grid label row */}
-      <div
-        className="text-[9px] font-bold uppercase tracking-[0.15em] text-[oklch(0.45_0_0)] mb-1 text-center"
-        style={{ marginLeft: ROW_HEADER }}
-      >
-        {colLabel}
-      </div>
-
-      <div className="flex">
-        {/* Row label (vertical, rotated) */}
-        <div
-          className="flex items-center justify-center"
-          style={{ width: 14, minHeight: rows.length * CELL + COL_HEADER }}
-        >
-          <span
-            className="text-[9px] font-bold uppercase tracking-[0.15em] text-[oklch(0.45_0_0)] whitespace-nowrap"
-            style={{
-              writingMode: "vertical-rl",
-              transform: "rotate(180deg)",
-            }}
-          >
-            {rowLabel}
-          </span>
-        </div>
-
-        <div className="flex flex-col" style={{ marginLeft: 4 }}>
-          {/* Column headers */}
-          <div className="flex" style={{ marginLeft: ROW_HEADER }}>
-            {cols.map((col) => (
-              <div
-                key={col.name}
-                className="flex items-end justify-center overflow-hidden"
-                style={{ width: CELL, height: COL_HEADER }}
-              >
-                <span
-                  className="text-[8px] font-semibold tracking-wide whitespace-nowrap origin-bottom-left"
-                  style={{
-                    writingMode: "vertical-rl",
-                    transform: "rotate(180deg)",
-                    color: col.color
-                      ? SUSPECT_COLORS[col.color] ?? col.color
-                      : "oklch(0.60 0 0)",
-                    maxHeight: COL_HEADER,
-                    overflow: "hidden",
-                  }}
-                >
-                  {abbr(col.name, 6)}
-                </span>
-              </div>
-            ))}
-          </div>
-
-          {/* Rows */}
-          {rows.map((row) => (
-            <div key={row.name} className="flex items-center">
-              {/* Row header */}
-              <div
-                className="flex items-center justify-end pr-2 shrink-0"
-                style={{ width: ROW_HEADER }}
-              >
-                <span
-                  className="text-[8px] font-semibold tracking-wide truncate text-right"
-                  style={{
-                    color: row.color
-                      ? SUSPECT_COLORS[row.color] ?? row.color
-                      : "oklch(0.60 0 0)",
-                    maxWidth: ROW_HEADER - 8,
-                  }}
-                >
-                  {abbr(row.name, 6)}
-                </span>
-              </div>
-
-              {/* Cells */}
-              {cols.map((col) => {
-                const key = `${rowPrefix}_${row.name}_${colPrefix}_${col.name}`;
-                const state = (grid[key] ?? "") as CellState;
-                return (
-                  <button
-                    key={col.name}
-                    onClick={() => !disabled && onCell(key)}
-                    disabled={disabled}
-                    className={[
-                      "flex items-center justify-center border-r border-b border-[oklch(1_0_0/8%)] transition-colors duration-100",
-                      "hover:bg-[oklch(1_0_0/6%)]",
-                      state === "check"
-                        ? "bg-[oklch(0.30_0.08_145/30%)]"
-                        : state === "x"
-                          ? "bg-transparent"
-                          : state === "suspicion"
-                            ? "bg-[oklch(0.45_0.15_27/20%)]"
-                            : "bg-[oklch(1_0_0/2%)]",
-                      disabled ? "cursor-default" : "cursor-pointer",
-                    ].join(" ")}
-                    style={{ width: CELL, height: CELL }}
-                    title={`${row.name} / ${col.name}`}
-                  >
-                    <CellSymbol state={state} />
-                  </button>
-                );
-              })}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// Parse a cell key into its components.
-// Key format: `{rowPrefix}_{rowItem}_{colPrefix}_{colItem}`
-// Prefixes are always one of: weapon | location | motive | suspect
-function parseKey(key: string) {
-  const prefixes = ["weapon", "location", "motive", "suspect"];
+function parseKey(key: string): {
+  rowPrefix: GridPrefix;
+  rowItem: string;
+  colPrefix: GridPrefix;
+  colItem: string;
+} | null {
+  const prefixes: GridPrefix[] = ["weapon", "location", "motive", "suspect"];
   for (const rp of prefixes) {
     if (!key.startsWith(rp + "_")) continue;
     const afterRow = key.slice(rp.length + 1);
@@ -211,177 +381,541 @@ function parseKey(key: string) {
   return null;
 }
 
+interface TooltipInfo {
+  name: string;
+  emoji: string;
+  color?: string;
+  label: string;
+}
+
+interface Props {
+  game: MurdleGame;
+  grid: Record<string, string>;
+  onChange: (grid: Record<string, string>) => void;
+  disabled?: boolean;
+}
+
 export default function DeductionGrid({
   game,
   grid,
   onChange,
   disabled,
 }: Props) {
-  const categoryItems: Record<string, string[]> = {
-    weapon: game.weapons.map((w) => w.name),
-    location: game.locations.map((l) => l.name),
-    motive: game.motives.map((m) => m.name),
-    suspect: game.suspects.map((s) => s.name),
-  };
+  const [tooltip, setTooltip] = useState<TooltipInfo | null>(null);
+
+  //
+  // ── Layout constants ─────────────────────────────────────────────────────
+  //
+  // Grid has 12 col items (4 suspects + 4 motives + 4 locations)
+  // and 12 row items (4 weapons + 4 locations + 4 motives).
+  // We add: category-strip col (left), emoji-header col (left),
+  //         category-label row (top), emoji-header row (top).
+  //
+  // Cell size is chosen so the whole grid is ~square and compact.
+  //
+  const CELL = 26; // px — one data cell
+  const EMO_HDR = 28; // px — emoji header column/row
+  const CAT_LBL = 14; // px — category strip / label
+  const SEP = 2; // px — thick separator between groups
+  const N_SEPS = 2; // two separators in col axis (suspects|motives|locations)
+  // two separators in row axis (weapons|locations|motives)
+
+  const totalColItems = colGroupDefs(game).reduce(
+    (s, g) => s + g.items.length,
+    0,
+  );
+  const totalRowItems = rowGroupDefs(game).reduce(
+    (s, g) => s + g.items.length,
+    0,
+  );
+
+  // Build emoji maps
+  const emojiMaps = useMemo(
+    () => ({
+      suspect: buildEmojiMap(
+        game.suspects.map((s) => s.name),
+        "suspect",
+      ),
+      weapon: buildEmojiMap(
+        game.weapons.map((w) => w.name),
+        "weapon",
+      ),
+      location: buildEmojiMap(
+        game.locations.map((l) => l.name),
+        "location",
+      ),
+      motive: buildEmojiMap(
+        game.motives.map((m) => m.name),
+        "motive",
+      ),
+    }),
+    [game],
+  );
+
+  const categoryItems: Record<GridPrefix, string[]> = useMemo(
+    () => ({
+      weapon: game.weapons.map((w) => w.name),
+      location: game.locations.map((l) => l.name),
+      motive: game.motives.map((m) => m.name),
+      suspect: game.suspects.map((s) => s.name),
+    }),
+    [game],
+  );
 
   const handleCell = useCallback(
     (key: string) => {
       const current = (grid[key] ?? "") as CellState;
-      const idx = CYCLE.indexOf(current);
-      const next = CYCLE[(idx + 1) % CYCLE.length];
+      const next = CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length];
       const newGrid = { ...grid };
-
       if (next === "") {
         delete newGrid[key];
       } else {
         newGrid[key] = next;
       }
-
-      // Auto-propagate: when a cell is confirmed (✓), mark every other
-      // cell in the same row and column of that sub-grid as ✗.
       if (next === "check") {
         const parts = parseKey(key);
         if (parts) {
           const { rowPrefix, rowItem, colPrefix, colItem } = parts;
-
-          // Same row — all other colItems get ✗
           for (const item of categoryItems[colPrefix] ?? []) {
-            if (item === colItem) continue;
-            const k = `${rowPrefix}_${rowItem}_${colPrefix}_${item}`;
-            if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+            if (item !== colItem) {
+              const k = makeKey(rowPrefix, rowItem, colPrefix, item);
+              if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+            }
           }
-
-          // Same column — all other rowItems get ✗
           for (const item of categoryItems[rowPrefix] ?? []) {
-            if (item === rowItem) continue;
-            const k = `${rowPrefix}_${item}_${colPrefix}_${colItem}`;
-            if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+            if (item !== rowItem) {
+              const k = makeKey(rowPrefix, item, colPrefix, colItem);
+              if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+            }
           }
         }
       }
-
       onChange(newGrid);
     },
-    [grid, onChange, categoryItems]
+    [grid, onChange, categoryItems],
   );
 
-  const suspects = game.suspects;
-  const weapons = game.weapons;
-  const locations = game.locations;
-  const motives = game.motives;
+  const rowGroups = rowGroupDefs(game);
+  const colGroups = colGroupDefs(game);
 
-  // Add color info for suspects in the grid
-  const suspectsWithColor = suspects.map((s) => ({
-    name: s.name,
-    color: s.color,
-  }));
+  const isBlank = (rp: GridPrefix, cp: GridPrefix) =>
+    rp === cp || (rp === "motive" && cp === "location");
+
+  // Fixed computed sizes
+  const gridW = CAT_LBL + EMO_HDR + totalColItems * CELL + N_SEPS * SEP;
+  const gridH = CAT_LBL + EMO_HDR + totalRowItems * CELL + N_SEPS * SEP;
 
   return (
-    <div className="overflow-x-auto">
-      <div className="inline-block min-w-0">
-        {/* Legend */}
-        <div className="flex items-center gap-4 mb-4 flex-wrap">
-          <span className="text-[9px] text-[oklch(0.40_0_0)] uppercase tracking-[0.15em] font-semibold">
-            Legend:
+    <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
+      {/* Hover toolbar */}
+      <div
+        style={{
+          height: 28,
+          display: "flex",
+          alignItems: "center",
+          gap: 7,
+          marginBottom: 6,
+          padding: "0 4px",
+          borderRadius: 6,
+          background: tooltip ? "rgba(255,255,255,0.05)" : "transparent",
+          transition: "background 0.15s",
+          overflow: "hidden",
+        }}
+      >
+        {tooltip ? (
+          <>
+            <span style={{ fontSize: 16, lineHeight: 1, flexShrink: 0 }}>
+              {tooltip.emoji}
+            </span>
+            <span
+              style={{
+                fontSize: 8,
+                fontWeight: 700,
+                letterSpacing: "0.14em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.28)",
+                flexShrink: 0,
+              }}
+            >
+              {tooltip.label}
+            </span>
+            <span
+              style={{
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: "0.05em",
+                textTransform: "uppercase",
+                color: tooltip.color ?? "rgba(255,255,255,0.82)",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {tooltip.name}
+            </span>
+          </>
+        ) : (
+          <span
+            style={{
+              fontSize: 8,
+              color: "rgba(255,255,255,0.18)",
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+            }}
+          >
+            Hover item to see name
           </span>
-          <span className="flex items-center gap-1 text-[10px] text-green-400">
-            <span className="font-bold">✓</span>
-            <span className="text-[oklch(0.45_0_0)]">Confirmed</span>
-          </span>
-          <span className="flex items-center gap-1 text-[10px] text-[oklch(0.50_0_0)]">
-            <span className="font-bold">✗</span>
-            <span className="text-[oklch(0.45_0_0)]">Eliminated</span>
-          </span>
-          <span className="flex items-center gap-1 text-[10px] text-[oklch(0.65_0.22_27)]">
-            <span className="font-bold">?</span>
-            <span className="text-[oklch(0.45_0_0)]">Suspicious</span>
-          </span>
-          <span className="text-[9px] text-[oklch(0.35_0_0)] ml-auto">
-            Click to cycle
-          </span>
-        </div>
+        )}
+      </div>
 
-        {/* Grid layout: 2 columns × 3 rows of sub-grids */}
-        <div className="flex flex-col gap-6">
-          {/* Row 1: Weapons vs Suspects | Weapons vs Locations */}
-          <div className="flex gap-6 flex-wrap">
-            <SubGrid
-              rowLabel="Weapons"
-              colLabel="Suspects"
-              rows={weapons}
-              cols={suspectsWithColor}
-              rowPrefix="weapon"
-              colPrefix="suspect"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
-            <SubGrid
-              rowLabel="Weapons"
-              colLabel="Locations"
-              rows={weapons}
-              cols={locations}
-              rowPrefix="weapon"
-              colPrefix="location"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
+      {/* Legend */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          marginBottom: 8,
+          flexWrap: "wrap",
+        }}
+      >
+        <span
+          style={{
+            fontSize: 8,
+            color: "rgba(255,255,255,0.25)",
+            textTransform: "uppercase",
+            letterSpacing: "0.15em",
+            fontWeight: 600,
+          }}
+        >
+          Legend:
+        </span>
+        {[
+          ["✓", "#22c55e", "Confirmed"],
+          ["✗", "rgba(255,255,255,0.25)", "Eliminated"],
+          ["?", "#f97316", "Suspicious"],
+        ].map(([sym, col, lbl]) => (
+          <span
+            key={lbl}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 3,
+              fontSize: 9,
+            }}
+          >
+            <span style={{ color: col, fontWeight: 800 }}>{sym}</span>
+            <span style={{ color: "rgba(255,255,255,0.30)" }}>{lbl}</span>
+          </span>
+        ))}
+        <span
+          style={{
+            marginLeft: "auto",
+            fontSize: 8,
+            color: "rgba(255,255,255,0.15)",
+          }}
+        >
+          Click to cycle
+        </span>
+      </div>
+
+      {/* Grid — fixed pixel size, no overflow */}
+      <div style={{ width: gridW, height: gridH, flexShrink: 0 }}>
+        <div style={{ display: "flex", flexDirection: "column", width: gridW }}>
+          {/* ── Row 1: Column category group labels ── */}
+          <div
+            style={{
+              display: "flex",
+              height: CAT_LBL,
+              marginLeft: CAT_LBL + EMO_HDR,
+            }}
+          >
+            {colGroups.map((cg, cgi) => (
+              <div
+                key={cg.prefix}
+                style={{
+                  width: cg.items.length * CELL + (cgi > 0 ? SEP : 0),
+                  paddingLeft: cgi > 0 ? SEP : 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 6.5,
+                    fontWeight: 700,
+                    letterSpacing: "0.18em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.28)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {cg.label}
+                </span>
+              </div>
+            ))}
           </div>
 
-          {/* Row 2: Weapons vs Motives | Locations vs Suspects */}
-          <div className="flex gap-6 flex-wrap">
-            <SubGrid
-              rowLabel="Weapons"
-              colLabel="Motives"
-              rows={weapons}
-              cols={motives}
-              rowPrefix="weapon"
-              colPrefix="motive"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
-            <SubGrid
-              rowLabel="Locations"
-              colLabel="Suspects"
-              rows={locations}
-              cols={suspectsWithColor}
-              rowPrefix="location"
-              colPrefix="suspect"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
+          {/* ── Row 2: Column emoji headers ── */}
+          <div
+            style={{
+              display: "flex",
+              height: EMO_HDR,
+              marginLeft: CAT_LBL + EMO_HDR,
+            }}
+          >
+            {colGroups.map((cg, cgi) => (
+              <div
+                key={cg.prefix}
+                style={{
+                  display: "flex",
+                  marginLeft: cgi > 0 ? SEP : 0,
+                  borderLeft:
+                    cgi > 0
+                      ? `${SEP}px solid rgba(255,255,255,0.13)`
+                      : undefined,
+                }}
+              >
+                {cg.items.map((item, ci) => {
+                  const color = item.color
+                    ? (SUSPECT_COLORS[item.color] ?? item.color)
+                    : undefined;
+                  const emoji = emojiMaps[cg.prefix].get(item.name) ?? "?";
+                  return (
+                    <div
+                      key={item.name}
+                      title={item.name}
+                      onMouseEnter={() =>
+                        setTooltip({
+                          name: item.name,
+                          emoji,
+                          color,
+                          label: cg.label.slice(0, -1),
+                        })
+                      }
+                      onMouseLeave={() => setTooltip(null)}
+                      style={{
+                        width: CELL,
+                        height: EMO_HDR,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        cursor: "default",
+                        borderLeft:
+                          ci > 0
+                            ? "1px solid rgba(255,255,255,0.07)"
+                            : undefined,
+                      }}
+                    >
+                      <span style={{ fontSize: CELL * 0.6, lineHeight: 1 }}>
+                        {emoji}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
           </div>
 
-          {/* Row 3: Locations vs Motives | Motives vs Suspects */}
-          <div className="flex gap-6 flex-wrap">
-            <SubGrid
-              rowLabel="Locations"
-              colLabel="Motives"
-              rows={locations}
-              cols={motives}
-              rowPrefix="location"
-              colPrefix="motive"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
-            <SubGrid
-              rowLabel="Motives"
-              colLabel="Suspects"
-              rows={motives}
-              cols={suspectsWithColor}
-              rowPrefix="motive"
-              colPrefix="suspect"
-              grid={grid}
-              onCell={handleCell}
-              disabled={disabled}
-            />
-          </div>
+          {/* ── Row groups ── */}
+          {rowGroups.map((rg, rgi) => (
+            <div
+              key={rg.prefix}
+              style={{
+                display: "flex",
+                marginTop: rgi > 0 ? SEP : 0,
+                borderTop:
+                  rgi > 0 ? `${SEP}px solid rgba(255,255,255,0.13)` : undefined,
+              }}
+            >
+              {/* Category label strip */}
+              <div
+                style={{
+                  width: CAT_LBL,
+                  height: rg.items.length * CELL,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  flexShrink: 0,
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: 6,
+                    fontWeight: 700,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.18)",
+                    writingMode: "vertical-rl",
+                    transform: "rotate(180deg)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {rg.label}
+                </span>
+              </div>
+
+              {/* Row items */}
+              <div style={{ display: "flex", flexDirection: "column" }}>
+                {rg.items.map((rowItem, ri) => {
+                  const rowColor = rowItem.color
+                    ? (SUSPECT_COLORS[rowItem.color] ?? rowItem.color)
+                    : undefined;
+                  const rowEmoji =
+                    emojiMaps[rg.prefix].get(rowItem.name) ?? "?";
+                  return (
+                    <div
+                      key={rowItem.name}
+                      style={{
+                        display: "flex",
+                        height: CELL,
+                        borderTop:
+                          ri > 0
+                            ? "1px solid rgba(255,255,255,0.07)"
+                            : undefined,
+                      }}
+                    >
+                      {/* Row emoji header */}
+                      <div
+                        title={rowItem.name}
+                        onMouseEnter={() =>
+                          setTooltip({
+                            name: rowItem.name,
+                            emoji: rowEmoji,
+                            color: rowColor,
+                            label: rg.label.slice(0, -1),
+                          })
+                        }
+                        onMouseLeave={() => setTooltip(null)}
+                        style={{
+                          width: EMO_HDR,
+                          height: CELL,
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexShrink: 0,
+                          cursor: "default",
+                        }}
+                      >
+                        <span style={{ fontSize: CELL * 0.6, lineHeight: 1 }}>
+                          {rowEmoji}
+                        </span>
+                      </div>
+
+                      {/* Cells per col group */}
+                      {colGroups.map((cg, cgi) => {
+                        const blank = isBlank(rg.prefix, cg.prefix);
+                        return (
+                          <div
+                            key={cg.prefix}
+                            style={{
+                              display: "flex",
+                              marginLeft: cgi > 0 ? SEP : 0,
+                              borderLeft:
+                                cgi > 0
+                                  ? `${SEP}px solid rgba(255,255,255,0.13)`
+                                  : undefined,
+                            }}
+                          >
+                            {blank ? (
+                              <div
+                                style={{
+                                  width: cg.items.length * CELL,
+                                  height: CELL,
+                                  background: "rgba(0,0,0,0.55)",
+                                }}
+                              />
+                            ) : (
+                              cg.items.map((colItem, ci) => {
+                                const key = makeKey(
+                                  rg.prefix,
+                                  rowItem.name,
+                                  cg.prefix,
+                                  colItem.name,
+                                );
+                                const state = (grid[key] ?? "") as CellState;
+                                const bg =
+                                  state === "check"
+                                    ? "rgba(34,197,94,0.15)"
+                                    : state === "suspicion"
+                                      ? "rgba(249,115,22,0.12)"
+                                      : "rgba(255,255,255,0.015)";
+                                return (
+                                  <button
+                                    key={colItem.name}
+                                    onClick={() => !disabled && handleCell(key)}
+                                    disabled={disabled}
+                                    title={`${rowItem.name} / ${colItem.name}`}
+                                    onMouseEnter={(e) => {
+                                      if (!disabled)
+                                        (
+                                          e.currentTarget as HTMLButtonElement
+                                        ).style.background =
+                                          state === "check"
+                                            ? "rgba(34,197,94,0.26)"
+                                            : state === "suspicion"
+                                              ? "rgba(249,115,22,0.22)"
+                                              : "rgba(255,255,255,0.08)";
+                                    }}
+                                    onMouseLeave={(e) => {
+                                      (
+                                        e.currentTarget as HTMLButtonElement
+                                      ).style.background = bg;
+                                    }}
+                                    style={{
+                                      width: CELL,
+                                      height: CELL,
+                                      display: "flex",
+                                      alignItems: "center",
+                                      justifyContent: "center",
+                                      background: bg,
+                                      border: "none",
+                                      borderLeft:
+                                        ci > 0
+                                          ? "1px solid rgba(255,255,255,0.07)"
+                                          : undefined,
+                                      cursor: disabled ? "default" : "pointer",
+                                      outline: "none",
+                                      transition: "background 0.1s",
+                                      flexShrink: 0,
+                                    }}
+                                  >
+                                    <CellSymbol state={state} size={CELL} />
+                                  </button>
+                                );
+                              })
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+type GroupDef = { prefix: GridPrefix; items: GridItem[]; label: string };
+
+function rowGroupDefs(game: MurdleGame): GroupDef[] {
+  return [
+    { prefix: "weapon",   items: game.weapons   as GridItem[], label: "WEAPONS"   },
+    { prefix: "location", items: game.locations as GridItem[], label: "LOCATIONS" },
+    { prefix: "motive",   items: game.motives   as GridItem[], label: "MOTIVES"   },
+  ];
+}
+
+function colGroupDefs(game: MurdleGame): GroupDef[] {
+  return [
+    { prefix: "suspect",  items: game.suspects.map(s => ({ name: s.name, color: s.color })), label: "SUSPECTS"  },
+    { prefix: "motive",   items: game.motives   as GridItem[], label: "MOTIVES"   },
+    { prefix: "location", items: game.locations as GridItem[], label: "LOCATIONS" },
+  ];
 }

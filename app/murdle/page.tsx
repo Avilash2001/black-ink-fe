@@ -120,7 +120,7 @@ export default function InkquestPage() {
             <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.2em]">
               How it works
             </h2>
-            <div className="space-y-2 text-xs text-[oklch(0.52_0_0)] leading-relaxed">
+            <div className="space-y-3 text-sm text-[oklch(0.55_0_0)] leading-relaxed">
               <p><span className="text-[oklch(0.65_0.18_15)] font-semibold">1.</span> The AI generates a complete murder case — suspects, weapons, locations, motives, clues, and a hidden solution.</p>
               <p><span className="text-[oklch(0.65_0.18_15)] font-semibold">2.</span> Read the clues and suspect statements. Innocent suspects always tell the truth. The killer always lies.</p>
               <p><span className="text-[oklch(0.65_0.18_15)] font-semibold">3.</span> Use the deduction grid to eliminate impossibilities until only one solution remains.</p>

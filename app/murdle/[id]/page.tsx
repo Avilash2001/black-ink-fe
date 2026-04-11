@@ -21,59 +21,118 @@ const SUSPECT_COLORS: Record<string, string> = {
   magenta: "#FF00FF",
 };
 
-function SuspectIcon({ color }: { color: string }) {
+// Large suspect silhouette for cards (mimics original Murdle style)
+function SuspectSilhouette({ color }: { color: string }) {
   const hex = SUSPECT_COLORS[color] ?? color;
   return (
-    <svg
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      aria-hidden="true"
-    >
-      <circle cx="18" cy="13" r="7" fill={hex} opacity="0.85" />
-      <path
-        d="M4 34c0-7.732 6.268-14 14-14s14 6.268 14 14"
-        stroke={hex}
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        opacity="0.7"
-      />
+    <svg width="90" height="90" viewBox="0 0 90 90" fill="none" aria-hidden="true">
+      <circle cx="45" cy="30" r="20" fill={hex} />
+      <path d="M5 88c0-22.091 17.909-40 40-40s40 17.909 40 40" fill={hex} />
     </svg>
   );
 }
 
-function CategorySection({
-  title,
-  items,
-}: {
-  title: string;
-  items: { name: string; description: string }[];
-}) {
-  return (
-    <div className="space-y-2">
-      <h3 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[oklch(0.45_0_0)]">
-        {title}
-      </h3>
-      <div className="grid grid-cols-2 gap-2">
-        {items.map((item) => (
-          <div
-            key={item.name}
-            className="glass-card rounded-lg px-3 py-2.5 space-y-0.5"
-          >
-            <div className="text-xs font-semibold text-[oklch(0.85_0.005_74)] tracking-wide">
-              {item.name}
-            </div>
-            <div className="text-[11px] text-[oklch(0.48_0_0)] leading-snug">
-              {item.description}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+// Emoji lookup for weapons, locations, motives — with deduplication
+function getItemEmojiRaw(name: string, category: "weapon" | "location" | "motive"): string {
+  const n = name.toLowerCase();
+  if (category === "weapon") {
+    if (n.includes("dagger") || n.includes("knife") || n.includes("blade") || n.includes("sword")) return "🗡️";
+    if (n.includes("opener") || n.includes("stiletto") || n.includes("lancet") || n.includes("scalpel")) return "🔪";
+    if (n.includes("poison") || n.includes("tincture") || n.includes("vial") || n.includes("toxin") || n.includes("elixir")) return "🧪";
+    if (n.includes("syringe") || n.includes("injection") || n.includes("needle")) return "💉";
+    if (n.includes("gun") || n.includes("pistol") || n.includes("revolver") || n.includes("rifle")) return "🔫";
+    if (n.includes("rope") || n.includes("garrote") || n.includes("wire") || n.includes("cord") || n.includes("string")) return "🪢";
+    if (n.includes("chain")) return "🔗";
+    if (n.includes("candlestick") || n.includes("candle")) return "🕯️";
+    if (n.includes("axe") || n.includes("hatchet") || n.includes("cleaver")) return "🪓";
+    if (n.includes("wrench") || n.includes("spanner")) return "🔧";
+    if (n.includes("pipe") || n.includes("lead pipe")) return "🔩";
+    if (n.includes("hammer") || n.includes("mallet") || n.includes("club") || n.includes("bludgeon") || n.includes("bat")) return "🔨";
+    if (n.includes("iron bar") || n.includes("iron rod")) return "🪛";
+    if (n.includes("arrow") || n.includes("bow")) return "🏹";
+    if (n.includes("book") || n.includes("tome")) return "📚";
+    if (n.includes("crystal") || n.includes("gem") || n.includes("stone") || n.includes("paperweight")) return "💎";
+    if (n.includes("bottle") || n.includes("flask") || n.includes("decanter")) return "🍾";
+    if (n.includes("vase") || n.includes("urn")) return "🏺";
+    if (n.includes("pen") || n.includes("quill")) return "🖊️";
+    if (n.includes("scissors") || n.includes("shears")) return "✂️";
+    if (n.includes("statuette") || n.includes("figurine") || n.includes("statue")) return "🗿";
+    if (n.includes("clock") || n.includes("watch")) return "⌚";
+    if (n.includes("brass") || n.includes("bronze")) return "🥉";
+    if (n.includes("iron") || n.includes("metal")) return "🪝";
+    if (n.includes("silk") || n.includes("scarf") || n.includes("cravat") || n.includes("tie")) return "🧣";
+    return "⚔️";
+  }
+  if (category === "location") {
+    if (n.includes("library") || n.includes("study") || n.includes("archive")) return "📚";
+    if (n.includes("garden") || n.includes("maze") || n.includes("hedge") || n.includes("greenhouse")) return "🌿";
+    if (n.includes("kitchen") || n.includes("pantry") || n.includes("dining")) return "🍽️";
+    if (n.includes("observatory") || n.includes("telescope")) return "🔭";
+    if (n.includes("cellar") || n.includes("wine") || n.includes("basement") || n.includes("vault")) return "🍷";
+    if (n.includes("ballroom") || n.includes("salon") || n.includes("grand hall")) return "🏛️";
+    if (n.includes("bedroom") || n.includes("chamber") || n.includes("suite")) return "🛏️";
+    if (n.includes("lab")) return "🔬";
+    if (n.includes("chapel") || n.includes("church") || n.includes("cathedral")) return "⛪";
+    if (n.includes("tower") || n.includes("turret") || n.includes("roof")) return "🗼";
+    if (n.includes("golf") || n.includes("course")) return "⛳";
+    if (n.includes("boat") || n.includes("dock") || n.includes("harbor") || n.includes("pier")) return "⛵";
+    if (n.includes("stable") || n.includes("barn")) return "🐎";
+    if (n.includes("gallery") || n.includes("museum")) return "🖼️";
+    if (n.includes("chateau") || n.includes("castle") || n.includes("manor") || n.includes("fortress")) return "🏰";
+    if (n.includes("forest") || n.includes("woods")) return "🌲";
+    if (n.includes("pool") || n.includes("bath")) return "🏊";
+    if (n.includes("corridor") || n.includes("hall") || n.includes("passage")) return "🚪";
+    if (n.includes("clock") || n.includes("clock tower")) return "🕰️";
+    return "🏠";
+  }
+  // motive
+  if (n.includes("jealous") || n.includes("envy") || n.includes("rage")) return "💚";
+  if (n.includes("greed") || n.includes("money") || n.includes("fortune") || n.includes("wealth") || n.includes("inherit")) return "💰";
+  if (n.includes("debt") || n.includes("unpaid") || n.includes("owe") || n.includes("bankrupt")) return "💸";
+  if (n.includes("revenge") || n.includes("vengeance") || n.includes("vendetta")) return "⚔️";
+  if (n.includes("love") || n.includes("affair") || n.includes("romance") || n.includes("passion") || n.includes("hide an")) return "❤️";
+  if (n.includes("power") || n.includes("ambition") || n.includes("control")) return "👑";
+  if (n.includes("blackmail") || n.includes("silence") || n.includes("spy") || n.includes("eliminate")) return "🕵️";
+  if (n.includes("secret") || n.includes("expose") || n.includes("conceal")) return "🤫";
+  if (n.includes("fear") || n.includes("protect") || n.includes("survival")) return "🛡️";
+  if (n.includes("honor") || n.includes("pride") || n.includes("reputation")) return "🏆";
+  if (n.includes("patent") || n.includes("stolen") || n.includes("theft") || n.includes("steal") || n.includes("invention")) return "📜";
+  return "🎭";
 }
+
+// Fallback pools for deduplication
+const WEAPON_FALLBACKS = ["⚔️","🔪","🗡️","🪃","🪖","🧨","💣","🪤","🔩","🪛"];
+const LOCATION_FALLBACKS = ["🏠","🏡","🏚️","🏗️","🗺️","🧭","🌉","🏟️","🏪","🏫"];
+const MOTIVE_FALLBACKS = ["🎭","🎪","🎯","🎲","🎰","🃏","🎴","🎬","🎩","🎸"];
+const SUSPECT_FALLBACKS = ["🕵️","👤","🧑","👩","🧔","👳","🦹","🧛","🧟","🥷"];
+
+function buildEmojiMap(names: string[], category: "weapon" | "location" | "motive" | "suspect"): Map<string, string> {
+  const map = new Map<string, string>();
+  const used = new Set<string>();
+  const fallbacks =
+    category === "weapon" ? WEAPON_FALLBACKS
+    : category === "location" ? LOCATION_FALLBACKS
+    : category === "suspect" ? SUSPECT_FALLBACKS
+    : MOTIVE_FALLBACKS;
+  let fallbackIdx = 0;
+  for (const name of names) {
+    let emoji = category === "suspect" ? "🕵️" : getItemEmojiRaw(name, category);
+    if (used.has(emoji)) {
+      while (fallbackIdx < fallbacks.length && used.has(fallbacks[fallbackIdx])) fallbackIdx++;
+      emoji = fallbackIdx < fallbacks.length ? fallbacks[fallbackIdx++] : "❓";
+    }
+    used.add(emoji);
+    map.set(name, emoji);
+  }
+  return map;
+}
+
+function getItemEmoji(name: string, category: "weapon" | "location" | "motive", emojiMap?: Map<string, string>): string {
+  if (emojiMap) return emojiMap.get(name) ?? getItemEmojiRaw(name, category);
+  return getItemEmojiRaw(name, category);
+}
+
+type CardTab = "suspects" | "weapons" | "locations" | "motives";
 
 function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: MurdleGame }) {
   const murdererSuspect = game.suspects.find(
@@ -92,11 +151,11 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
           borderColor: `${murdererColor}30`,
         }}
       >
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[oklch(0.50_0_0)] mb-1">
+        <p className="text-xs uppercase tracking-[0.2em] text-[oklch(0.50_0_0)] mb-1">
           The Murderer
         </p>
         <p
-          className="text-2xl font-bold uppercase tracking-wide"
+          className="text-3xl font-bold uppercase tracking-wide"
           style={{ color: murdererColor }}
         >
           {solution.murderer}
@@ -104,23 +163,23 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
       </div>
 
       <div className="space-y-2">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[oklch(0.40_0_0)]">
+        <p className="text-xs uppercase tracking-[0.2em] text-[oklch(0.40_0_0)]">
           Full Assignments
         </p>
         <div className="overflow-x-auto">
-          <table className="w-full text-xs">
+          <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-[oklch(1_0_0/8%)]">
-                <th className="text-left py-2 pr-3 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-[10px]">
+                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
                   Suspect
                 </th>
-                <th className="text-left py-2 pr-3 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-[10px]">
+                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
                   Weapon
                 </th>
-                <th className="text-left py-2 pr-3 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-[10px]">
+                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
                   Location
                 </th>
-                <th className="text-left py-2 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-[10px]">
+                <th className="text-left py-2.5 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
                   Motive
                 </th>
               </tr>
@@ -175,6 +234,7 @@ export default function MurdleGamePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  const [activeCardTab, setActiveCardTab] = useState<CardTab>("suspects");
   const [grid, setGrid] = useState<Record<string, string>>({});
   const [accusation, setAccusation] = useState({
     who: "",
@@ -321,7 +381,7 @@ export default function MurdleGamePage() {
               {/* 1. Title block */}
               <div className="space-y-2">
                 <p
-                  className="text-[10px] font-bold uppercase tracking-[0.35em]"
+                  className="text-xs font-bold uppercase tracking-[0.35em]"
                   style={{
                     color: "#DC143C",
                     textShadow: "0 0 20px oklch(0.45 0.22 15 / 0.4)",
@@ -330,7 +390,7 @@ export default function MurdleGamePage() {
                   INKQUEST
                 </p>
                 <h1
-                  className="text-2xl md:text-3xl font-bold uppercase tracking-[0.04em] leading-tight text-[oklch(0.92_0.005_74)]"
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.03em] leading-tight text-[oklch(0.92_0.005_74)]"
                   style={{ fontFamily: "var(--font-story, Georgia, serif)" }}
                 >
                   {game.title}
@@ -359,56 +419,103 @@ export default function MurdleGamePage() {
 
               {/* 2. Intro */}
               <div className="glass-card rounded-xl px-5 py-4 space-y-2">
-                <p className="text-sm text-[oklch(0.75_0.01_74)] leading-relaxed italic">
+                <p className="text-base text-[oklch(0.75_0.01_74)] leading-relaxed italic">
                   {game.intro}
                 </p>
-                <p className="text-xs text-[oklch(0.42_0_0)] leading-relaxed">
+                <p className="text-sm text-[oklch(0.45_0_0)] leading-relaxed">
                   Each of the four suspects brought exactly one weapon to one
                   location, and each had exactly one motive. Only one of them is
                   the murderer — and the clues below are enough to prove it.
                 </p>
               </div>
 
-              {/* 3. Suspect cards */}
-              <div className="space-y-3">
-                <h2 className="text-[10px] font-bold uppercase tracking-[0.2em] text-[oklch(0.45_0_0)]">
-                  Suspects
-                </h2>
-                <div className="grid grid-cols-2 gap-3">
-                  {game.suspects.map((suspect) => {
-                    const hex =
-                      SUSPECT_COLORS[suspect.color] ?? suspect.color;
-                    return (
-                      <div
-                        key={suspect.name}
-                        className="rounded-xl px-4 py-4 space-y-2 border transition-colors"
-                        style={{
-                          background: `${hex}08`,
-                          borderColor: `${hex}25`,
-                        }}
+              {/* 3 & 4. Tabbed card view */}
+              <div className="space-y-4">
+                {/* Tab nav — Murdle style */}
+                <div className="flex items-center flex-wrap gap-y-1">
+                  {(["suspects", "weapons", "locations", "motives"] as CardTab[]).map((tab, i) => (
+                    <React.Fragment key={tab}>
+                      {i > 0 && (
+                        <span className="mx-2 text-[oklch(0.30_0_0)] font-bold select-none">•</span>
+                      )}
+                      <button
+                        onClick={() => setActiveCardTab(tab)}
+                        className="text-xs font-black uppercase tracking-[0.18em] pb-0.5 border-b-2 transition-all duration-150"
+                        style={
+                          activeCardTab === tab
+                            ? { borderColor: "#DC143C", color: "#DC143C" }
+                            : { borderColor: "transparent", color: "oklch(0.42 0 0)" }
+                        }
                       >
-                        <div className="flex items-center gap-2.5">
-                          <SuspectIcon color={suspect.color} />
-                          <span
-                            className="font-bold text-sm uppercase tracking-wide"
-                            style={{ color: hex }}
-                          >
-                            {suspect.name}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-[oklch(0.52_0_0)] leading-snug">
-                          {suspect.description}
-                        </p>
-                      </div>
-                    );
-                  })}
+                        {tab}
+                      </button>
+                    </React.Fragment>
+                  ))}
                 </div>
-              </div>
 
-              {/* 4. Weapons / Locations / Motives */}
-              <CategorySection title="Weapons" items={game.weapons} />
-              <CategorySection title="Locations" items={game.locations} />
-              <CategorySection title="Motives" items={game.motives} />
+                {/* 2×2 Murdle-style card grid */}
+                {(() => {
+                  const suspectEmojis = buildEmojiMap(game.suspects.map(s => s.name), "suspect");
+                  const weaponEmojis = buildEmojiMap(game.weapons.map(w => w.name), "weapon");
+                  const locationEmojis = buildEmojiMap(game.locations.map(l => l.name), "location");
+                  const motiveEmojis = buildEmojiMap(game.motives.map(m => m.name), "motive");
+                  return (
+                    <div className="grid grid-cols-2 gap-4">
+                      {activeCardTab === "suspects" && game.suspects.map((s) => {
+                        const hex = SUSPECT_COLORS[s.color] ?? s.color;
+                        const emoji = suspectEmojis.get(s.name) ?? "🕵️";
+                        return (
+                          <div key={s.name} className="flex flex-col items-center rounded-2xl border overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)", borderColor: hex + "40" }}>
+                            <div className="flex-1 flex items-center justify-center pt-8 pb-4">
+                              <span className="text-7xl select-none" style={{ filter: `drop-shadow(0 0 16px ${hex}70)` }}>{emoji}</span>
+                            </div>
+                            <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
+                              <p className="font-black uppercase tracking-wider text-sm leading-tight" style={{ color: hex, fontFamily: "monospace" }}>{s.name}</p>
+                              <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{s.description}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+
+                      {activeCardTab === "weapons" && game.weapons.map((w) => (
+                        <div key={w.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                          <div className="flex-1 flex items-end justify-center pt-8 pb-3">
+                            <span className="text-6xl select-none">{getItemEmoji(w.name, "weapon", weaponEmojis)}</span>
+                          </div>
+                          <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{w.name}</p>
+                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{w.description}</p>
+                          </div>
+                        </div>
+                      ))}
+
+                      {activeCardTab === "locations" && game.locations.map((l) => (
+                        <div key={l.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                          <div className="flex-1 flex items-end justify-center pt-8 pb-3">
+                            <span className="text-6xl select-none">{getItemEmoji(l.name, "location", locationEmojis)}</span>
+                          </div>
+                          <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{l.name}</p>
+                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{l.description}</p>
+                          </div>
+                        </div>
+                      ))}
+
+                      {activeCardTab === "motives" && game.motives.map((m) => (
+                        <div key={m.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                          <div className="flex-1 flex items-end justify-center pt-8 pb-3">
+                            <span className="text-6xl select-none">{getItemEmoji(m.name, "motive", motiveEmojis)}</span>
+                          </div>
+                          <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{m.name}</p>
+                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{m.description}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
+              </div>
 
               {/* 5. Clues & Evidence */}
               <div
@@ -419,19 +526,19 @@ export default function MurdleGamePage() {
                 }}
               >
                 <h2
-                  className="text-xs font-bold uppercase tracking-[0.25em]"
+                  className="text-sm font-bold uppercase tracking-[0.25em]"
                   style={{ color: "#DC143C" }}
                 >
                   Clues &amp; Evidence
                 </h2>
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {game.clues.map((clue, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 text-sm text-[oklch(0.78_0.005_74)] leading-relaxed"
+                      className="flex gap-3 text-base text-[oklch(0.80_0.005_74)] leading-relaxed"
                     >
                       <span
-                        className="shrink-0 font-bold text-xs mt-0.5"
+                        className="shrink-0 font-bold text-sm mt-0.5"
                         style={{ color: "#DC143C", opacity: 0.7 }}
                       >
                         {i + 1}.
@@ -450,14 +557,13 @@ export default function MurdleGamePage() {
                   borderColor: "oklch(0.55 0.15 280 / 15%)",
                 }}
               >
-                <h2 className="text-xs font-bold uppercase tracking-[0.25em] text-[oklch(0.55_0.10_280)]">
+                <h2 className="text-sm font-bold uppercase tracking-[0.25em] text-[oklch(0.55_0.10_280)]">
                   Suspect Statements
                 </h2>
-                <p className="text-[10px] text-[oklch(0.38_0_0)] italic">
-                  Innocent suspects always tell the truth. The killer always
-                  lies.
+                <p className="text-xs text-[oklch(0.42_0_0)] italic">
+                  Innocent suspects always tell the truth. The killer always lies.
                 </p>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {game.statements.map((stmt, i) => {
                     const suspect = game.suspects.find(
                       (s) => s.name === stmt.suspect
@@ -471,12 +577,12 @@ export default function MurdleGamePage() {
                         className="flex gap-3 items-start"
                       >
                         <span
-                          className="shrink-0 text-xs font-bold mt-0.5 uppercase tracking-wide"
+                          className="shrink-0 text-sm font-bold mt-0.5 uppercase tracking-wide"
                           style={{ color: hex }}
                         >
                           {stmt.suspect}:
                         </span>
-                        <p className="text-sm text-[oklch(0.72_0.005_74)] leading-relaxed italic">
+                        <p className="text-base text-[oklch(0.75_0.005_74)] leading-relaxed italic">
                           &ldquo;{stmt.text}&rdquo;
                         </p>
                       </div>
@@ -489,7 +595,7 @@ export default function MurdleGamePage() {
               {!gameOver ? (
                 <div className="space-y-4">
                   <h2
-                    className="text-xs font-bold uppercase tracking-[0.25em]"
+                    className="text-sm font-bold uppercase tracking-[0.25em]"
                     style={{ color: "#DC143C" }}
                   >
                     Make Your Accusation
@@ -641,17 +747,17 @@ export default function MurdleGamePage() {
             </div>
 
             {/* ── RIGHT COLUMN: Sticky Deduction Grid ── */}
-            <div className="lg:w-auto lg:shrink-0">
+            <div style={{ width: 390, flexShrink: 0 }}>
               <div className="lg:sticky lg:top-20">
                 <div
-                  className="rounded-xl border p-4 space-y-3"
+                  className="rounded-xl border p-4"
                   style={{
                     background: "oklch(0.10 0.012 65 / 80%)",
                     borderColor: "oklch(1 0 0 / 8%)",
                     backdropFilter: "blur(16px)",
                   }}
                 >
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)]">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)] mb-3">
                     Deduction Grid
                   </h2>
                   <DeductionGrid
