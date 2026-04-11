@@ -3,8 +3,10 @@
 import React, { useCallback, useMemo, useState } from "react";
 import { MurdleGame } from "@/lib/api/murdle";
 
-type CellState = "" | "x" | "check" | "suspicion";
-const CYCLE: CellState[] = ["", "x", "check", "suspicion"];
+// "x_auto" = auto-placed by check propagation (grey, lower precedence)
+// "x"      = manually placed by user (purple, higher precedence)
+type CellState = "" | "x" | "x_auto" | "check" | "suspicion";
+const CYCLE: CellState[] = ["", "x", "check", "suspicion"]; // x_auto NOT in cycle
 type GridPrefix = "weapon" | "location" | "motive" | "suspect";
 
 interface GridItem { name: string; color?: string; }
@@ -306,47 +308,15 @@ function buildEmojiMap(
 function CellSymbol({ state, size }: { state: CellState; size: number }) {
   const fs = Math.max(10, size * 0.45);
   if (state === "check")
-    return (
-      <span
-        style={{
-          color: "#22c55e",
-          fontWeight: 800,
-          fontSize: fs,
-          lineHeight: 1,
-          userSelect: "none",
-        }}
-      >
-        ✓
-      </span>
-    );
+    return <span style={{ color: "#22c55e", fontWeight: 800, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✓</span>;
+  // User-placed x — purple, bold
   if (state === "x")
-    return (
-      <span
-        style={{
-          color: "rgba(255,255,255,0.28)",
-          fontWeight: 800,
-          fontSize: fs,
-          lineHeight: 1,
-          userSelect: "none",
-        }}
-      >
-        ✗
-      </span>
-    );
+    return <span style={{ color: "#a855f7", fontWeight: 800, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✗</span>;
+  // Auto-placed x from check propagation — dim grey
+  if (state === "x_auto")
+    return <span style={{ color: "rgba(255,255,255,0.22)", fontWeight: 700, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✗</span>;
   if (state === "suspicion")
-    return (
-      <span
-        style={{
-          color: "#f97316",
-          fontWeight: 800,
-          fontSize: fs,
-          lineHeight: 1,
-          userSelect: "none",
-        }}
-      >
-        ?
-      </span>
-    );
+    return <span style={{ color: "#f97316", fontWeight: 800, fontSize: fs, lineHeight: 1, userSelect: "none" }}>?</span>;
   return null;
 }
 
@@ -464,7 +434,9 @@ export default function DeductionGrid({
 
   const handleCell = useCallback(
     (key: string) => {
-      const current = (grid[key] ?? "") as CellState;
+      const raw = (grid[key] ?? "") as CellState;
+      // x_auto is not in CYCLE — clicking it starts cycling from ""
+      const current = raw === "x_auto" ? "" : raw;
       const next = CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length];
       const newGrid = { ...grid };
       if (next === "") {
@@ -472,24 +444,44 @@ export default function DeductionGrid({
       } else {
         newGrid[key] = next;
       }
-      if (next === "check") {
-        const parts = parseKey(key);
-        if (parts) {
-          const { rowPrefix, rowItem, colPrefix, colItem } = parts;
+
+      const parts = parseKey(key);
+      if (parts) {
+        const { rowPrefix, rowItem, colPrefix, colItem } = parts;
+
+        if (next === "check") {
+          // Auto-mark siblings as x_auto (not x) — don't overwrite user-x or check
           for (const item of categoryItems[colPrefix] ?? []) {
             if (item !== colItem) {
               const k = makeKey(rowPrefix, rowItem, colPrefix, item);
-              if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+              const existing = newGrid[k] ?? "";
+              if (existing !== "check" && existing !== "x") newGrid[k] = "x_auto";
             }
           }
           for (const item of categoryItems[rowPrefix] ?? []) {
             if (item !== rowItem) {
               const k = makeKey(rowPrefix, item, colPrefix, colItem);
-              if ((newGrid[k] ?? "") !== "check") newGrid[k] = "x";
+              const existing = newGrid[k] ?? "";
+              if (existing !== "check" && existing !== "x") newGrid[k] = "x_auto";
+            }
+          }
+        } else if (raw === "check") {
+          // Cycling away from check — only clear x_auto, preserve user-placed x
+          for (const item of categoryItems[colPrefix] ?? []) {
+            if (item !== colItem) {
+              const k = makeKey(rowPrefix, rowItem, colPrefix, item);
+              if (newGrid[k] === "x_auto") delete newGrid[k];
+            }
+          }
+          for (const item of categoryItems[rowPrefix] ?? []) {
+            if (item !== rowItem) {
+              const k = makeKey(rowPrefix, item, colPrefix, colItem);
+              if (newGrid[k] === "x_auto") delete newGrid[k];
             }
           }
         }
       }
+
       onChange(newGrid);
     },
     [grid, onChange, categoryItems],
@@ -591,7 +583,8 @@ export default function DeductionGrid({
         </span>
         {[
           ["✓", "#22c55e", "Confirmed"],
-          ["✗", "rgba(255,255,255,0.25)", "Eliminated"],
+          ["✗", "#a855f7", "Eliminated"],
+          ["✗", "rgba(255,255,255,0.22)", "Auto-elim"],
           ["?", "#f97316", "Suspicious"],
         ].map(([sym, col, lbl]) => (
           <span
@@ -837,9 +830,11 @@ export default function DeductionGrid({
                                 const bg =
                                   state === "check"
                                     ? "rgba(34,197,94,0.15)"
-                                    : state === "suspicion"
-                                      ? "rgba(249,115,22,0.12)"
-                                      : "rgba(255,255,255,0.015)";
+                                    : state === "x"
+                                      ? "rgba(168,85,247,0.12)"
+                                      : state === "suspicion"
+                                        ? "rgba(249,115,22,0.12)"
+                                        : "rgba(255,255,255,0.015)";
                                 return (
                                   <button
                                     key={colItem.name}
