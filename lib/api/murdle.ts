@@ -102,3 +102,11 @@ export function updateMurdleGrid(
     body: JSON.stringify({ grid }),
   });
 }
+
+export function generateMurdleNarrative(
+  id: string
+): Promise<{ narrative: string }> {
+  return api<{ narrative: string }>(`/murdle/${id}/narrative`, {
+    method: "POST",
+  });
+}

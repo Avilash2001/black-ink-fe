@@ -9,6 +9,7 @@ import {
   accuseMurdle,
   giveUpMurdle,
   updateMurdleGrid,
+  generateMurdleNarrative,
   MurdleGame,
   MurdleSolution,
 } from "@/lib/api/murdle";
@@ -250,6 +251,8 @@ export default function MurdleGamePage() {
   const [isGivingUp, setIsGivingUp] = useState(false);
   const [revealedSolution, setRevealedSolution] =
     useState<MurdleSolution | null>(null);
+  const [narrative, setNarrative] = useState<string | null>(null);
+  const [narrativeLoading, setNarrativeLoading] = useState(false);
 
   // Debounce timer ref for grid sync
   const gridSyncTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -272,6 +275,18 @@ export default function MurdleGamePage() {
     };
     fetch();
   }, [id]);
+
+  // Auto-generate narrative when game ends
+  useEffect(() => {
+    if (!game) return;
+    const isOver = game.solved || game.givenUp;
+    if (!isOver || narrative || narrativeLoading) return;
+    setNarrativeLoading(true);
+    generateMurdleNarrative(id)
+      .then(({ narrative: text }) => setNarrative(text))
+      .catch(console.error)
+      .finally(() => setNarrativeLoading(false));
+  }, [game, id, narrative, narrativeLoading]);
 
   const handleGridChange = useCallback(
     (newGrid: Record<string, string>) => {
@@ -735,6 +750,87 @@ export default function MurdleGamePage() {
                       game={game}
                     />
                   )}
+
+                  {/* ── Detective's Closing Narrative ── */}
+                  <div
+                    className="rounded-xl border overflow-hidden"
+                    style={{
+                      background: "oklch(0.09 0.018 65 / 85%)",
+                      borderColor: "oklch(0.55 0.10 65 / 20%)",
+                    }}
+                  >
+                    {/* Header */}
+                    <div
+                      className="flex items-center gap-2 px-5 py-3 border-b"
+                      style={{ borderColor: "oklch(0.55 0.10 65 / 15%)" }}
+                    >
+                      <span className="text-base">🪶</span>
+                      <span
+                        className="text-[9px] font-bold uppercase tracking-[0.22em]"
+                        style={{ color: "oklch(0.55 0.12 65)" }}
+                      >
+                        Detective&apos;s Closing Notes
+                      </span>
+                    </div>
+
+                    {/* Body */}
+                    <div className="px-5 py-4">
+                      {narrativeLoading && !narrative ? (
+                        <div className="space-y-2 animate-pulse">
+                          {[80, 95, 70, 88].map((w, i) => (
+                            <div
+                              key={i}
+                              style={{
+                                height: 10,
+                                width: `${w}%`,
+                                borderRadius: 4,
+                                background: "oklch(0.22 0.005 65 / 60%)",
+                              }}
+                            />
+                          ))}
+                        </div>
+                      ) : narrative ? (
+                        <div className="space-y-3">
+                          {(() => {
+                            // Client-side safety: normalise escape seqs & unwrap JSON if backend slipped
+                            let text = narrative.replace(/\\n/g, '\n').trim();
+                            if (text.startsWith('{') || text.startsWith('"')) {
+                              try {
+                                const parsed = JSON.parse(text);
+                                const findStr = (o: unknown): string | null => {
+                                  if (typeof o === 'string') return o;
+                                  if (o && typeof o === 'object') {
+                                    for (const v of Object.values(o)) {
+                                      const f = findStr(v); if (f) return f;
+                                    }
+                                  }
+                                  return null;
+                                };
+                                text = findStr(parsed)?.replace(/\\n/g, '\n') ?? text;
+                              } catch { /* use as-is */ }
+                            }
+                            const paras = text.split(/\n+/).filter(Boolean);
+                            return paras.map((para, i) => (
+                              <p
+                                key={i}
+                                className="text-[12px] leading-relaxed"
+                                style={{
+                                  color: i === 0 ? "oklch(0.78 0.04 65)" : "oklch(0.60 0.02 65)",
+                                  fontStyle: i === paras.length - 1 ? "italic" : "normal",
+                                }}
+                              >
+                                {para}
+                              </p>
+                            ));
+                          })()}
+                        </div>
+                      ) : (
+                        <p className="text-[11px] text-[oklch(0.38_0_0)]">
+                          Narrative unavailable.
+                        </p>
+                      )}
+                    </div>
+                  </div>
 
                   <button
                     onClick={() => router.push("/murdle")}
