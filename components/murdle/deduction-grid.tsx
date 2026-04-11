@@ -450,19 +450,18 @@ export default function DeductionGrid({
         const { rowPrefix, rowItem, colPrefix, colItem } = parts;
 
         if (next === "check") {
-          // Auto-mark siblings as x_auto (not x) — don't overwrite user-x or check
+          // Auto-mark siblings as x_auto — don't overwrite check, user-x, or suspicion (?)
+          const noOverwrite = new Set(["check", "x", "suspicion"]);
           for (const item of categoryItems[colPrefix] ?? []) {
             if (item !== colItem) {
               const k = makeKey(rowPrefix, rowItem, colPrefix, item);
-              const existing = newGrid[k] ?? "";
-              if (existing !== "check" && existing !== "x") newGrid[k] = "x_auto";
+              if (!noOverwrite.has(newGrid[k] ?? "")) newGrid[k] = "x_auto";
             }
           }
           for (const item of categoryItems[rowPrefix] ?? []) {
             if (item !== rowItem) {
               const k = makeKey(rowPrefix, item, colPrefix, colItem);
-              const existing = newGrid[k] ?? "";
-              if (existing !== "check" && existing !== "x") newGrid[k] = "x_auto";
+              if (!noOverwrite.has(newGrid[k] ?? "")) newGrid[k] = "x_auto";
             }
           }
         } else if (raw === "check") {
