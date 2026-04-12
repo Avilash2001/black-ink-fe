@@ -253,6 +253,7 @@ export default function MurdleGamePage() {
   const [isGivingUp, setIsGivingUp] = useState(false);
   const [hints, setHints] = useState<string[]>([]);
   const [hintLoading, setHintLoading] = useState<number | null>(null);
+  const [gridModalOpen, setGridModalOpen] = useState(false);
   const [revealedSolution, setRevealedSolution] =
     useState<MurdleSolution | null>(null);
   const [narrative, setNarrative] = useState<string | null>(null);
@@ -461,7 +462,7 @@ export default function MurdleGamePage() {
 
               {/* 2. Intro */}
               <div className="glass-card rounded-xl px-5 py-4 space-y-2">
-                <p className="text-base text-[oklch(0.75_0.01_74)] leading-relaxed italic">
+                <p className="text-sm sm:text-base text-[oklch(0.75_0.01_74)] leading-relaxed italic">
                   {game.intro}
                 </p>
                 <p className="text-sm text-[oklch(0.45_0_0)] leading-relaxed">
@@ -473,20 +474,33 @@ export default function MurdleGamePage() {
 
               {/* 3 & 4. Tabbed card view */}
               <div className="space-y-4">
-                {/* Tab nav — Murdle style */}
-                <div className="flex items-center flex-wrap gap-y-1">
+                {/* Tab nav — pill grid on mobile, inline dots on sm+ */}
+                <div className="grid grid-cols-4 gap-1.5 sm:flex sm:items-center sm:gap-0">
                   {(["suspects", "weapons", "locations", "motives"] as CardTab[]).map((tab, i) => (
                     <React.Fragment key={tab}>
                       {i > 0 && (
-                        <span className="mx-2 text-[oklch(0.30_0_0)] font-bold select-none">•</span>
+                        <span className="hidden sm:inline mx-2 text-[oklch(0.30_0_0)] font-bold select-none">•</span>
                       )}
                       <button
                         onClick={() => setActiveCardTab(tab)}
-                        className="text-xs font-black uppercase tracking-[0.18em] pb-0.5 border-b-2 transition-all duration-150"
+                        className={[
+                          "text-[10px] font-black uppercase tracking-[0.12em] transition-all duration-150",
+                          // Mobile: pill style
+                          "sm:pb-0.5 sm:border-b-2 sm:border-x-0 sm:border-t-0 sm:rounded-none sm:px-0 sm:py-0",
+                          "rounded-lg px-1 py-2 border",
+                        ].join(" ")}
                         style={
                           activeCardTab === tab
-                            ? { borderColor: "#DC143C", color: "#DC143C" }
-                            : { borderColor: "transparent", color: "oklch(0.42 0 0)" }
+                            ? {
+                                borderColor: "#DC143C",
+                                color: "#DC143C",
+                                background: "oklch(0.35 0.15 15 / 15%)",
+                              }
+                            : {
+                                borderColor: "oklch(1 0 0 / 8%)",
+                                color: "oklch(0.42 0 0)",
+                                background: "oklch(1 0 0 / 3%)",
+                              }
                         }
                       >
                         {tab}
@@ -502,7 +516,7 @@ export default function MurdleGamePage() {
                   const locationEmojis = buildEmojiMap(game.locations.map(l => l.name), "location");
                   const motiveEmojis = buildEmojiMap(game.motives.map(m => m.name), "motive");
                   return (
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 min-[400px]:grid-cols-2 gap-3 sm:gap-4">
                       {activeCardTab === "suspects" && game.suspects.map((s) => {
                         const hex = SUSPECT_COLORS[s.color] ?? s.color;
                         const emoji = suspectEmojis.get(s.name) ?? "🕵️";
@@ -609,7 +623,7 @@ export default function MurdleGamePage() {
                   {game.clues.map((clue, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 text-base text-[oklch(0.80_0.005_74)] leading-relaxed"
+                      className="flex gap-3 text-sm sm:text-base text-[oklch(0.80_0.005_74)] leading-relaxed"
                     >
                       <span
                         className="shrink-0 font-bold text-sm mt-0.5"
@@ -648,15 +662,15 @@ export default function MurdleGamePage() {
                     return (
                       <div
                         key={i}
-                        className="flex gap-3 items-start"
+                        className="flex gap-2 sm:gap-3 items-start"
                       >
                         <span
-                          className="shrink-0 text-sm font-bold mt-0.5 uppercase tracking-wide"
+                          className="shrink-0 text-xs sm:text-sm font-bold mt-0.5 uppercase tracking-wide max-w-[90px] sm:max-w-none leading-snug"
                           style={{ color: hex }}
                         >
                           {stmt.suspect}:
                         </span>
-                        <p className="text-base text-[oklch(0.75_0.005_74)] leading-relaxed italic">
+                        <p className="text-sm sm:text-base text-[oklch(0.75_0.005_74)] leading-relaxed italic">
                           &ldquo;{stmt.text}&rdquo;
                         </p>
                       </div>
@@ -901,8 +915,8 @@ export default function MurdleGamePage() {
               )}
             </div>
 
-            {/* ── RIGHT COLUMN: Sticky Deduction Grid ── */}
-            <div style={{ width: 390, flexShrink: 0 }}>
+            {/* ── RIGHT COLUMN: Sticky Deduction Grid (desktop only) ── */}
+            <div className="hidden lg:block w-[390px] flex-shrink-0">
               <div className="lg:sticky lg:top-20">
                 <div
                   className="rounded-xl border p-4"
@@ -927,6 +941,57 @@ export default function MurdleGamePage() {
           </div>
         </div>
       </div>
+
+      {/* ── Mobile: Floating grid button ── */}
+      {!gridModalOpen && (
+        <button
+          onClick={() => setGridModalOpen(true)}
+          className="lg:hidden fixed bottom-5 right-4 z-40 flex items-center gap-2 px-4 py-3 rounded-full text-xs font-bold uppercase tracking-[0.15em] shadow-lg transition-all duration-200"
+          style={{
+            background: "oklch(0.14 0.025 15 / 95%)",
+            border: "1px solid oklch(0.55 0.18 15 / 35%)",
+            color: "#DC143C",
+            backdropFilter: "blur(12px)",
+            boxShadow: "0 0 20px oklch(0.35 0.22 15 / 0.25)",
+          }}
+        >
+          <span style={{ fontSize: 16 }}>🔍</span>
+          Grid
+        </button>
+      )}
+
+      {/* ── Mobile: Grid modal (full-screen so 358px grid fits without scroll) ── */}
+      {gridModalOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-50 flex flex-col"
+          style={{ background: "oklch(0.08 0.010 65)" }}
+        >
+          {/* Header bar */}
+          <div
+            className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0"
+            style={{ borderColor: "oklch(1 0 0 / 8%)" }}
+          >
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)]">
+              Deduction Grid
+            </h2>
+            <button
+              onClick={() => setGridModalOpen(false)}
+              className="text-[oklch(0.40_0_0)] hover:text-[oklch(0.70_0_0)] transition-colors text-xl leading-none px-1"
+            >
+              ✕
+            </button>
+          </div>
+          {/* Grid centered, no outer padding so it never overflows */}
+          <div className="flex-1 flex items-center justify-center overflow-hidden p-2">
+            <DeductionGrid
+              game={game}
+              grid={grid}
+              onChange={handleGridChange}
+              disabled={gameOver}
+            />
+          </div>
+        </div>
+      )}
     </>
   );
 }

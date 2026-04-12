@@ -111,7 +111,7 @@ export default function InkquestPage() {
               A Black Ink Mystery
             </p>
             <h1
-              className="text-7xl font-bold uppercase tracking-[0.06em]"
+              className="text-[clamp(2.8rem,12vw,4.5rem)] font-bold uppercase tracking-[0.04em] sm:tracking-[0.06em]"
               style={{
                 color: "#DC143C",
                 textShadow: "0 0 60px oklch(0.45 0.22 15 / 0.35), 0 0 120px oklch(0.45 0.22 15 / 0.12)",
