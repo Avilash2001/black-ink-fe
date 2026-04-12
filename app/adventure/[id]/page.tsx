@@ -129,7 +129,7 @@ export default function AdventurePage() {
                         })}
                       </div>
                     )}
-                    <StoryStream paragraphs={[item.text]} />
+                    <StoryStream paragraphs={item.text.split(/\n\n+/).map(p => p.trim()).filter(Boolean)} />
                   </React.Fragment>
                 );
               })}
