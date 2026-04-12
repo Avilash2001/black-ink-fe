@@ -12,7 +12,7 @@ import {
   clearSession as removeSession,
   Session,
 } from "./storage";
-import { login, logout, register, getMe, updateMe, updateProfile, changePassword } from "./api/auth";
+import { login, logout, register, getMe, updateMe, updateProfile, changePassword, setDateOfBirth } from "./api/auth";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
@@ -22,6 +22,7 @@ interface AuthContextType {
   signUp: typeof register;
   signOut: () => Promise<void>;
   updateMatureContent: (value: boolean) => Promise<void>;
+  setDateOfBirth: (dob: string) => Promise<void>;
   updateProfile: (patch: { name?: string; email?: string }) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
@@ -102,6 +103,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const setDateOfBirthFn = async (dob: string) => {
+    const updated = await setDateOfBirth(dob);
+    setUser(updated);
+    storeSession(updated);
+  };
+
   const updateProfileFn = async (patch: { name?: string; email?: string }) => {
     const updated = await updateProfile(patch);
     setUser(updated);
@@ -113,7 +120,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent, updateProfile: updateProfileFn, changePassword: changePasswordFn }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent, setDateOfBirth: setDateOfBirthFn, updateProfile: updateProfileFn, changePassword: changePasswordFn }}>
       {children}
     </AuthContext.Provider>
   );

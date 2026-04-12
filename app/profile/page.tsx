@@ -109,6 +109,18 @@ export default function ProfilePage() {
               Profile
             </h2>
 
+            {user.dateOfBirth && (
+              <div className="space-y-1.5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.42_0_0)]">
+                  Date of Birth
+                </p>
+                <p className="text-sm text-[oklch(0.60_0_0)]">
+                  {new Date(user.dateOfBirth + "T00:00:00").toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
+                  <span className="ml-2 text-[10px] text-[oklch(0.35_0_0)] uppercase tracking-wide">· Cannot be changed</span>
+                </p>
+              </div>
+            )}
+
             <form onSubmit={handleProfileSave} className="space-y-4">
               <Field label="Name">
                 <input

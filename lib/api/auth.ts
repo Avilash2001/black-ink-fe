@@ -6,6 +6,7 @@ export async function login(email: string, password: string) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    dateOfBirth: string | null;
   }>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password }),
@@ -29,6 +30,7 @@ export async function getMe() {
     name: string;
     email: string;
     matureEnabled: boolean;
+    dateOfBirth: string | null;
   }>("/auth/me");
 }
 
@@ -38,6 +40,7 @@ export async function updateMe(patch: { matureEnabled?: boolean }) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    dateOfBirth: string | null;
   }>("/auth/me", {
     method: "PATCH",
     body: JSON.stringify(patch),
@@ -50,6 +53,7 @@ export async function updateProfile(patch: { name?: string; email?: string }) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    dateOfBirth: string | null;
   }>("/auth/me/profile", {
     method: "PATCH",
     body: JSON.stringify(patch),
@@ -60,5 +64,18 @@ export async function changePassword(currentPassword: string, newPassword: strin
   return api<{ success: boolean }>("/auth/me/password", {
     method: "PATCH",
     body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}
+
+export async function setDateOfBirth(dateOfBirth: string) {
+  return api<{
+    id: string;
+    name: string;
+    email: string;
+    matureEnabled: boolean;
+    dateOfBirth: string | null;
+  }>("/auth/me/dob", {
+    method: "POST",
+    body: JSON.stringify({ dateOfBirth }),
   });
 }

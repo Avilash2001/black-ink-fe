@@ -3,6 +3,7 @@ export type Session = {
   name: string;
   email: string;
   matureEnabled: boolean;
+  dateOfBirth: string | null; // "YYYY-MM-DD", permanent once set
 };
 
 const KEY = "black-ink-session";
@@ -19,7 +20,7 @@ export function setSession(session: Session) {
 export function getSession(): Session | null {
   if (!isBrowser()) return null;
   const raw = localStorage.getItem(KEY);
-  return raw ? { matureEnabled: false, ...JSON.parse(raw) } : null;
+  return raw ? { matureEnabled: false, dateOfBirth: null, ...JSON.parse(raw) } : null;
 }
 
 export function clearSession() {
