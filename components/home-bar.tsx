@@ -17,6 +17,8 @@ export default function HomeBar() {
     return <></>;
   }
 
+  const initial = user?.name?.charAt(0).toUpperCase() ?? "?";
+
   return (
     !(pathName === "/" && !user) && (
       <div className="fixed top-0 inset-x-0 h-14 flex items-center justify-between px-5 bg-[oklch(0.07_0.008_65/85%)] backdrop-blur-xl border-b border-[oklch(1_0_0/6%)] z-50">
@@ -37,16 +39,25 @@ export default function HomeBar() {
           </button>
 
           {user && (
-            <Button
-              variant="ghost"
-              size="sm"
-              className="text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)]"
-              onClick={async () => {
-                await signOut();
-              }}
-            >
-              Logout
-            </Button>
+            <>
+              <button
+                onClick={() => router.push("/profile")}
+                className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all duration-200 hover:ring-2 hover:ring-[oklch(0.79_0.165_78/50%)]"
+                style={{ background: "oklch(0.22 0.04 78)", color: "oklch(0.79 0.165 78)" }}
+                aria-label="Your profile"
+                title={user.name}
+              >
+                {initial}
+              </button>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)]"
+                onClick={async () => { await signOut(); }}
+              >
+                Logout
+              </Button>
+            </>
           )}
         </div>
 

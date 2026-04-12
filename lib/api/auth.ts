@@ -43,3 +43,22 @@ export async function updateMe(patch: { matureEnabled?: boolean }) {
     body: JSON.stringify(patch),
   });
 }
+
+export async function updateProfile(patch: { name?: string; email?: string }) {
+  return api<{
+    id: string;
+    name: string;
+    email: string;
+    matureEnabled: boolean;
+  }>("/auth/me/profile", {
+    method: "PATCH",
+    body: JSON.stringify(patch),
+  });
+}
+
+export async function changePassword(currentPassword: string, newPassword: string) {
+  return api<{ success: boolean }>("/auth/me/password", {
+    method: "PATCH",
+    body: JSON.stringify({ currentPassword, newPassword }),
+  });
+}

@@ -12,7 +12,7 @@ import {
   clearSession as removeSession,
   Session,
 } from "./storage";
-import { login, logout, register, getMe, updateMe } from "./api/auth";
+import { login, logout, register, getMe, updateMe, updateProfile, changePassword } from "./api/auth";
 import { useRouter } from "next/navigation";
 
 interface AuthContextType {
@@ -22,6 +22,8 @@ interface AuthContextType {
   signUp: typeof register;
   signOut: () => Promise<void>;
   updateMatureContent: (value: boolean) => Promise<void>;
+  updateProfile: (patch: { name?: string; email?: string }) => Promise<void>;
+  changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | null>(null);
@@ -85,7 +87,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const updateMatureContent = async (value: boolean) => {
     if (!user) return;
 
-    // Optimistic update — update state instantly before the API call
     const prev = user;
     const optimistic: Session = { ...user, matureEnabled: value };
     setUser(optimistic);
@@ -96,14 +97,23 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(updated);
       storeSession(updated);
     } catch {
-      // Roll back on failure
       setUser(prev);
       storeSession(prev);
     }
   };
 
+  const updateProfileFn = async (patch: { name?: string; email?: string }) => {
+    const updated = await updateProfile(patch);
+    setUser(updated);
+    storeSession(updated);
+  };
+
+  const changePasswordFn = async (currentPassword: string, newPassword: string) => {
+    await changePassword(currentPassword, newPassword);
+  };
+
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent, updateProfile: updateProfileFn, changePassword: changePasswordFn }}>
       {children}
     </AuthContext.Provider>
   );

@@ -8,6 +8,14 @@ import { Trash2, ChevronRight, Globe, Sparkles, User } from "lucide-react";
 import HomeBar from "@/components/home-bar";
 import { useAuth } from "@/lib/auth-context";
 
+function getGreeting(name: string): string {
+  const hour = new Date().getHours();
+  const first = name.split(" ")[0];
+  if (hour < 12) return `Good morning, ${first}.`;
+  if (hour < 18) return `Good afternoon, ${first}.`;
+  return `Good evening, ${first}.`;
+}
+
 export default function Home() {
   const { user } = useAuth();
   const [isLoading, setIsLoading] = useState(true);
@@ -108,11 +116,14 @@ export default function Home() {
         <main className="min-h-screen flex flex-col items-center justify-center gap-8 px-6 pt-14">
           <div className="w-full max-w-md space-y-8">
             {/* Header */}
-            <div className="text-center space-y-2">
-              <h1 className="text-4xl font-bold tracking-tight ink-gradient">
+            <div className="text-center space-y-1">
+              <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-[oklch(0.79_0.165_78)] opacity-70">
                 Black Ink
+              </p>
+              <h1 className="text-3xl font-bold tracking-tight text-[oklch(0.92_0.005_74)]">
+                {getGreeting(user!.name)}
               </h1>
-              <p className="text-sm text-[oklch(0.50_0_0)]">
+              <p className="text-sm text-[oklch(0.45_0_0)]">
                 Where will you go today?
               </p>
             </div>
