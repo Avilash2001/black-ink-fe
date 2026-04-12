@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Timer, CheckCircle2, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import HomeBar from "@/components/home-bar";
 import DeductionGrid from "@/components/murdle/deduction-grid";
@@ -9,6 +10,7 @@ import {
   accuseMurdle,
   giveUpMurdle,
   updateMurdleGrid,
+  revealMurdleHint,
   generateMurdleNarrative,
   MurdleGame,
   MurdleSolution,
@@ -249,6 +251,8 @@ export default function MurdleGamePage() {
   } | null>(null);
   const [isAccusing, setIsAccusing, ] = useState(false);
   const [isGivingUp, setIsGivingUp] = useState(false);
+  const [hints, setHints] = useState<string[]>([]);
+  const [hintLoading, setHintLoading] = useState<number | null>(null);
   const [revealedSolution, setRevealedSolution] =
     useState<MurdleSolution | null>(null);
   const [narrative, setNarrative] = useState<string | null>(null);
@@ -263,6 +267,7 @@ export default function MurdleGamePage() {
         const data = await getMurdle(id);
         setGame(data);
         setGrid(data.playerGrid ?? {});
+        if (data.revealedHints?.length) setHints(data.revealedHints);
         if (data.solution) {
           setRevealedSolution(data.solution);
         }
@@ -314,6 +319,25 @@ export default function MurdleGamePage() {
       console.error(err);
     } finally {
       setIsAccusing(false);
+    }
+  };
+
+  const handleRevealHint = async (n: number) => {
+    try {
+      setHintLoading(n);
+      const { hint } = await revealMurdleHint(id, n);
+      setHints((prev) => {
+        const next = [...prev];
+        next[n] = hint;
+        return next;
+      });
+      // Refresh game to get updated hintsRevealedAt / hintsAvailableAt
+      const fresh = await getMurdle(id);
+      setGame(fresh);
+    } catch (err: any) {
+      alert(err?.message ?? "Could not reveal hint.");
+    } finally {
+      setHintLoading(null);
     }
   };
 
@@ -410,26 +434,29 @@ export default function MurdleGamePage() {
                 >
                   {game.title}
                 </h1>
-                {(game.solved || game.givenUp) && (
-                  <div
-                    className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide mt-1"
-                    style={
-                      game.solved
-                        ? {
-                            background: "oklch(0.30 0.08 145 / 20%)",
-                            color: "oklch(0.70 0.15 145)",
-                            border: "1px solid oklch(0.40 0.10 145 / 30%)",
-                          }
-                        : {
-                            background: "oklch(0.35 0.12 27 / 20%)",
-                            color: "oklch(0.65 0.22 27)",
-                            border: "1px solid oklch(0.45 0.15 27 / 30%)",
-                          }
-                    }
-                  >
-                    {game.solved ? "Mystery Solved!" : "Mystery Unsolved"}
-                  </div>
-                )}
+                <div className="flex items-center gap-3 mt-1 flex-wrap">
+                  {(game.solved || game.givenUp) && (
+                    <div
+                      className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-wide"
+                      style={
+                        game.solved
+                          ? {
+                              background: "oklch(0.30 0.08 145 / 20%)",
+                              color: "oklch(0.70 0.15 145)",
+                              border: "1px solid oklch(0.40 0.10 145 / 30%)",
+                            }
+                          : {
+                              background: "oklch(0.35 0.12 27 / 20%)",
+                              color: "oklch(0.65 0.22 27)",
+                              border: "1px solid oklch(0.45 0.15 27 / 30%)",
+                            }
+                      }
+                    >
+                      {game.solved ? "Mystery Solved!" : "Mystery Unsolved"}
+                    </div>
+                  )}
+                  <GameTimer game={game} />
+                </div>
               </div>
 
               {/* 2. Intro */}
@@ -532,7 +559,39 @@ export default function MurdleGamePage() {
                 })()}
               </div>
 
-              {/* 5. Clues & Evidence */}
+              {/* 5. Hints */}
+              {!gameOver && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)]">
+                      Detective Hints
+                    </h2>
+                    <span className="text-[9px] text-[oklch(0.32_0_0)]">
+                      {hints.filter(Boolean).length}/3 revealed
+                    </span>
+                  </div>
+                  {!game.hintsReady ? (
+                    <p className="text-xs text-[oklch(0.38_0_0)] italic">
+                      Hints are being prepared…
+                    </p>
+                  ) : (
+                    <div className="space-y-2">
+                      {[0, 1, 2].map((n) => (
+                        <HintCard
+                          key={n}
+                          n={n}
+                          game={game}
+                          hints={hints}
+                          loading={hintLoading}
+                          onReveal={handleRevealHint}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* 7. Clues & Evidence */}
               <div
                 className="rounded-xl border px-5 py-5 space-y-3"
                 style={{
@@ -869,6 +928,148 @@ export default function MurdleGamePage() {
         </div>
       </div>
     </>
+  );
+}
+
+// ── Hint Panel ───────────────────────────────────────────────────────────────
+
+function useCountdown(targetIso: string | null | undefined): string | null {
+  const [label, setLabel] = React.useState<string | null>(null);
+  React.useEffect(() => {
+    if (!targetIso) { setLabel(null); return; }
+    const tick = () => {
+      const diff = new Date(targetIso).getTime() - Date.now();
+      if (diff <= 0) { setLabel(null); return; }
+      const m = Math.floor(diff / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setLabel(`${m}m ${s}s`);
+    };
+    tick();
+    const id = setInterval(tick, 1000);
+    return () => clearInterval(id);
+  }, [targetIso]);
+  return label;
+}
+
+function formatDuration(ms: number): string {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function GameTimer({ game }: { game: MurdleGame }) {
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (game.solved || game.givenUp) return;
+    const tick = () => setElapsed(Date.now() - new Date(game.createdAt).getTime());
+    tick();
+    timerRef.current = setInterval(tick, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [game.createdAt, game.solved, game.givenUp]);
+
+  if (game.solved && game.solvedAt) {
+    const dur = new Date(game.solvedAt).getTime() - new Date(game.createdAt).getTime();
+    return (
+      <span className="flex items-center gap-1.5 text-xs font-semibold" style={{ color: "oklch(0.65 0.14 145)" }}>
+        <CheckCircle2 size={13} />
+        Solved in {formatDuration(dur)}
+      </span>
+    );
+  }
+  if (game.givenUp && game.givenUpAt) {
+    const dur = new Date(game.givenUpAt).getTime() - new Date(game.createdAt).getTime();
+    return (
+      <span className="flex items-center gap-1.5 text-xs font-semibold text-[oklch(0.60_0.18_27)]">
+        <XCircle size={13} />
+        Unsolved after {formatDuration(dur)}
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-1.5 text-xs font-semibold text-[oklch(0.45_0_0)]">
+      <Timer size={13} />
+      {formatDuration(elapsed)}
+    </span>
+  );
+}
+
+function HintCard({
+  n,
+  game,
+  hints,
+  loading,
+  onReveal,
+}: {
+  n: number;
+  game: MurdleGame;
+  hints: string[];
+  loading: number | null;
+  onReveal: (n: number) => void;
+}) {
+  const availableAt = game.hintsAvailableAt?.[n];
+  const countdown = useCountdown(availableAt && !hints[n] ? availableAt : null);
+  const prevRevealed = n === 0 || !!hints[n - 1];
+  const isRevealed = !!hints[n];
+  const isLocked = !prevRevealed || (!!availableAt && Date.now() < new Date(availableAt).getTime());
+  const isLoading = loading === n;
+
+  const labels = ["Hint I", "Hint II", "Hint III"];
+  const subtitles = ["Subtle", "Helpful", "Almost obvious"];
+
+  return (
+    <div
+      className="rounded-xl border p-4 space-y-3 transition-all duration-200"
+      style={{
+        background: isRevealed
+          ? "oklch(0.16 0.025 15 / 60%)"
+          : "oklch(0.11 0.01 65 / 50%)",
+        borderColor: isRevealed
+          ? "oklch(0.55 0.18 15 / 25%)"
+          : "oklch(1 0 0 / 7%)",
+      }}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <div>
+          <p className="text-xs font-bold uppercase tracking-[0.18em]" style={{ color: isRevealed ? "#DC143C" : "oklch(0.38 0 0)" }}>
+            {labels[n]}
+          </p>
+          <p className="text-[10px] text-[oklch(0.35_0_0)]">{subtitles[n]}</p>
+        </div>
+
+        {!isRevealed && (
+          isLocked ? (
+            <span className="text-[10px] text-[oklch(0.38_0_0)] font-mono">
+              {!prevRevealed ? "Reveal previous hint first" : countdown ? `🔒 ${countdown}` : "..."}
+            </span>
+          ) : (
+            <button
+              onClick={() => onReveal(n)}
+              disabled={isLoading}
+              className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.15em] rounded-lg border border-[#DC143C]/30 bg-[#DC143C]/10 text-[#DC143C] hover:bg-[#DC143C]/20 disabled:opacity-50 transition-all"
+            >
+              {isLoading ? (
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 border border-[#DC143C]/30 border-t-[#DC143C] rounded-full animate-spin" />
+                  Revealing…
+                </span>
+              ) : "Reveal"}
+            </button>
+          )
+        )}
+      </div>
+
+      {isRevealed && (
+        <p className="text-sm text-[oklch(0.75_0.005_74)] leading-relaxed italic border-t border-[oklch(1_0_0/8%)] pt-3">
+          &ldquo;{hints[n]}&rdquo;
+        </p>
+      )}
+    </div>
   );
 }
 

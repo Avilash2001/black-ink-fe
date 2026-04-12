@@ -1,12 +1,60 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import HomeBar from "@/components/home-bar";
 import { useAuth } from "@/lib/auth-context";
 import { generateMurdle, getMyMysteries, MysteryListItem } from "@/lib/api/murdle";
-import { ChevronRight, Search } from "lucide-react";
+import { ChevronRight, Search, Timer, CheckCircle2, XCircle } from "lucide-react";
+
+function formatDuration(ms: number): string {
+  const totalSec = Math.floor(ms / 1000);
+  const h = Math.floor(totalSec / 3600);
+  const m = Math.floor((totalSec % 3600) / 60);
+  const s = totalSec % 60;
+  if (h > 0) return `${h}h ${m}m`;
+  if (m > 0) return `${m}m ${s}s`;
+  return `${s}s`;
+}
+
+function MysteryTimer({ mystery }: { mystery: MysteryListItem }) {
+  const [elapsed, setElapsed] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  useEffect(() => {
+    if (mystery.solved || mystery.givenUp) return;
+    const tick = () => setElapsed(Date.now() - new Date(mystery.createdAt).getTime());
+    tick();
+    timerRef.current = setInterval(tick, 1000);
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [mystery.createdAt, mystery.solved, mystery.givenUp]);
+
+  if (mystery.solved && mystery.solvedAt) {
+    const dur = new Date(mystery.solvedAt).getTime() - new Date(mystery.createdAt).getTime();
+    return (
+      <span className="flex items-center gap-1 text-[9px] font-semibold" style={{ color: "oklch(0.60 0.12 145)" }}>
+        <CheckCircle2 size={10} />
+        {formatDuration(dur)}
+      </span>
+    );
+  }
+  if (mystery.givenUp && mystery.givenUpAt) {
+    const dur = new Date(mystery.givenUpAt).getTime() - new Date(mystery.createdAt).getTime();
+    return (
+      <span className="flex items-center gap-1 text-[9px] font-semibold text-[oklch(0.55_0.15_27)]">
+        <XCircle size={10} />
+        {formatDuration(dur)}
+      </span>
+    );
+  }
+  return (
+    <span className="flex items-center gap-1 text-[9px] font-semibold text-[oklch(0.45_0_0)]">
+      <Timer size={10} />
+      {formatDuration(elapsed)}
+    </span>
+  );
+}
 
 export default function InkquestPage() {
   const router = useRouter();
@@ -152,7 +200,7 @@ export default function InkquestPage() {
                       href={`/murdle/${m._id}`}
                       className="group flex justify-between items-center glass-card rounded-xl px-4 py-3.5 hover:border-[oklch(0.55_0.15_15/20%)] hover:bg-[oklch(0.55_0.15_15/4%)] transition-all duration-200"
                     >
-                      <div className="min-w-0 space-y-0.5">
+                      <div className="min-w-0 space-y-1">
                         <p className="text-xs font-semibold text-[oklch(0.80_0.005_74)] group-hover:text-white transition-colors truncate uppercase tracking-wide">
                           {m.title}
                         </p>
@@ -169,6 +217,7 @@ export default function InkquestPage() {
                           >
                             {m.solved ? "Solved" : m.givenUp ? "Unsolved" : "Open"}
                           </span>
+                          <MysteryTimer mystery={m} />
                         </div>
                       </div>
                       <ChevronRight

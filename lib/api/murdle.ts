@@ -49,6 +49,13 @@ export interface MurdleGame {
     why: string;
   } | null;
   createdAt: string;
+  solvedAt?: string;
+  givenUpAt?: string;
+  // Hints
+  hintsReady: boolean;
+  revealedHints: string[];          // up to 3 revealed hint texts
+  hintsRevealedAt: string[];        // ISO timestamps of each reveal
+  hintsAvailableAt: (string | null)[]; // ISO timestamps when each hint unlocks
 }
 
 export interface MysteryListItem {
@@ -58,6 +65,8 @@ export interface MysteryListItem {
   solved: boolean;
   givenUp: boolean;
   createdAt: string;
+  solvedAt?: string;
+  givenUpAt?: string;
 }
 
 export function generateMurdle(): Promise<{ gameId: string }> {
@@ -101,6 +110,13 @@ export function updateMurdleGrid(
     method: "PATCH",
     body: JSON.stringify({ grid }),
   });
+}
+
+export function revealMurdleHint(
+  id: string,
+  n: number
+): Promise<{ hint: string }> {
+  return api<{ hint: string }>(`/murdle/${id}/hint/${n}`, { method: "POST" });
 }
 
 export function generateMurdleNarrative(
