@@ -79,7 +79,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/murdle">
-                <button className="px-8 py-2.5 rounded-lg text-sm font-bold uppercase tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
+                <button className="px-8 py-2.5 rounded-lg text-sm font-bold tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
                   Play Inkquest
                 </button>
               </Link>
@@ -139,7 +139,7 @@ export default function Home() {
                 </Button>
               </Link>
               <Link href="/murdle" className="block">
-                <button className="w-full py-3 px-6 rounded-lg text-sm font-bold uppercase tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
+                <button className="w-full py-3 px-6 rounded-lg text-sm font-bold tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
                   Play Inkquest
                 </button>
               </Link>
