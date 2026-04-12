@@ -558,16 +558,46 @@ export default function DeductionGrid({
             Hover item to see name
           </span>
         )}
+        {/* Click to cycle + Reset live in toolbar row on the right */}
+        <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+          {!tooltip && (
+            <span style={{ fontSize: 8, color: "rgba(255,255,255,0.15)" }}>
+              Click to cycle
+            </span>
+          )}
+          {!disabled && Object.keys(grid).some((k) => grid[k]) && (
+            <button
+              onClick={() => onChange({})}
+              title="Reset grid"
+              style={{
+                fontSize: 8,
+                fontWeight: 700,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,0.35)",
+                border: "1px solid rgba(255,255,255,0.12)",
+                borderRadius: 4,
+                padding: "2px 6px",
+                background: "transparent",
+                cursor: "pointer",
+                lineHeight: 1.4,
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = "#DC143C"; e.currentTarget.style.borderColor = "rgba(220,20,60,0.4)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+            >
+              Reset
+            </button>
+          )}
+        </span>
       </div>
 
-      {/* Legend */}
+      {/* Legend — symbols only, fits in one line */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
           gap: 10,
           marginBottom: 8,
-          flexWrap: "wrap",
         }}
       >
         <span
@@ -600,15 +630,6 @@ export default function DeductionGrid({
             <span style={{ color: "rgba(255,255,255,0.30)" }}>{lbl}</span>
           </span>
         ))}
-        <span
-          style={{
-            marginLeft: "auto",
-            fontSize: 8,
-            color: "rgba(255,255,255,0.15)",
-          }}
-        >
-          Click to cycle
-        </span>
       </div>
 
       {/* Grid — fixed pixel size, no overflow */}

@@ -474,38 +474,29 @@ export default function MurdleGamePage() {
 
               {/* 3 & 4. Tabbed card view */}
               <div className="space-y-4">
-                {/* Tab nav — pill grid on mobile, inline dots on sm+ */}
-                <div className="grid grid-cols-4 gap-1.5 sm:flex sm:items-center sm:gap-0">
-                  {(["suspects", "weapons", "locations", "motives"] as CardTab[]).map((tab, i) => (
-                    <React.Fragment key={tab}>
-                      {i > 0 && (
-                        <span className="hidden sm:inline mx-2 text-[oklch(0.30_0_0)] font-bold select-none">•</span>
-                      )}
-                      <button
-                        onClick={() => setActiveCardTab(tab)}
-                        className={[
-                          "text-[10px] font-black uppercase tracking-[0.12em] transition-all duration-150",
-                          // Mobile: pill style
-                          "sm:pb-0.5 sm:border-b-2 sm:border-x-0 sm:border-t-0 sm:rounded-none sm:px-0 sm:py-0",
-                          "rounded-lg px-1 py-2 border",
-                        ].join(" ")}
-                        style={
-                          activeCardTab === tab
-                            ? {
-                                borderColor: "#DC143C",
-                                color: "#DC143C",
-                                background: "oklch(0.35 0.15 15 / 15%)",
-                              }
-                            : {
-                                borderColor: "oklch(1 0 0 / 8%)",
-                                color: "oklch(0.42 0 0)",
-                                background: "oklch(1 0 0 / 3%)",
-                              }
-                        }
-                      >
-                        {tab}
-                      </button>
-                    </React.Fragment>
+                {/* Tab nav — pill grid */}
+                <div className="grid grid-cols-4 gap-1.5">
+                  {(["suspects", "weapons", "locations", "motives"] as CardTab[]).map((tab) => (
+                    <button
+                      key={tab}
+                      onClick={() => setActiveCardTab(tab)}
+                      className="text-[10px] font-black uppercase tracking-[0.12em] transition-all duration-150 rounded-lg px-1 py-2 border"
+                      style={
+                        activeCardTab === tab
+                          ? {
+                              borderColor: "#DC143C",
+                              color: "#DC143C",
+                              background: "oklch(0.35 0.15 15 / 15%)",
+                            }
+                          : {
+                              borderColor: "oklch(1 0 0 / 8%)",
+                              color: "oklch(0.42 0 0)",
+                              background: "oklch(1 0 0 / 3%)",
+                            }
+                      }
+                    >
+                      {tab}
+                    </button>
                   ))}
                 </div>
 
