@@ -435,8 +435,9 @@ export default function DeductionGrid({
   const handleCell = useCallback(
     (key: string) => {
       const raw = (grid[key] ?? "") as CellState;
-      // x_auto is not in CYCLE — clicking it starts cycling from ""
-      const current = raw === "x_auto" ? "" : raw;
+      // Auto-placed cells are locked — user cannot cycle them
+      if (raw === "x_auto") return;
+      const current = raw;
       const next = CYCLE[(CYCLE.indexOf(current) + 1) % CYCLE.length];
       const newGrid = { ...grid };
       if (next === "") {
@@ -868,7 +869,7 @@ export default function DeductionGrid({
                                         ci > 0
                                           ? "1px solid rgba(255,255,255,0.07)"
                                           : undefined,
-                                      cursor: disabled ? "default" : "pointer",
+                                      cursor: disabled || state === "x_auto" ? "default" : "pointer",
                                       outline: "none",
                                       transition: "background 0.1s",
                                       flexShrink: 0,
