@@ -78,9 +78,9 @@ export default function Home() {
                   Begin Your Story
                 </Button>
               </Link>
-              <Link href="/murdle">
+              <Link href="/whodunit">
                 <button className="px-8 py-2.5 rounded-lg text-sm font-bold tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
-                  Play Inkquest
+                  Play Whodunit
                 </button>
               </Link>
             </div>
@@ -138,9 +138,9 @@ export default function Home() {
                   Start New Adventure
                 </Button>
               </Link>
-              <Link href="/murdle" className="block">
+              <Link href="/whodunit" className="block">
                 <button className="w-full py-3 px-6 rounded-lg text-sm font-bold tracking-[0.15em] border border-[#DC143C]/30 bg-[#DC143C]/8 text-[#DC143C] hover:bg-[#DC143C]/15 hover:border-[#DC143C]/50 transition-all duration-200">
-                  Play Inkquest
+                  Play Whodunit
                 </button>
               </Link>
             </div>

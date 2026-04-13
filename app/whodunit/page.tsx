@@ -56,7 +56,7 @@ function MysteryTimer({ mystery }: { mystery: MysteryListItem }) {
   );
 }
 
-export default function InkquestPage() {
+export default function WhodunitPage() {
   const router = useRouter();
   const { user, isLoading: authLoading } = useAuth();
 
@@ -83,7 +83,7 @@ export default function InkquestPage() {
       setIsGenerating(true);
       setError(null);
       const { gameId } = await generateMurdle();
-      router.push(`/murdle/${gameId}`);
+      router.push(`/whodunit/${gameId}`);
     } catch (err) {
       console.error(err);
       setError("Failed to generate mystery. Please try again.");
@@ -117,7 +117,7 @@ export default function InkquestPage() {
                 textShadow: "0 0 60px oklch(0.45 0.22 15 / 0.35), 0 0 120px oklch(0.45 0.22 15 / 0.12)",
               }}
             >
-              Inkquest
+              Whodunit
             </h1>
             <p className="text-[oklch(0.55_0_0)] text-sm leading-relaxed max-w-sm mx-auto">
               The AI that writes your adventures also stages murders. Every mystery is unique — study the clues, cross-examine the suspects, and name the killer before the case goes cold.
@@ -197,7 +197,7 @@ export default function InkquestPage() {
                   {mysteries.map((m) => (
                     <Link
                       key={m._id}
-                      href={`/murdle/${m._id}`}
+                      href={`/whodunit/${m._id}`}
                       className="group flex justify-between items-center glass-card rounded-xl px-4 py-3.5 hover:border-[oklch(0.55_0.15_15/20%)] hover:bg-[oklch(0.55_0.15_15/4%)] transition-all duration-200"
                     >
                       <div className="min-w-0 space-y-1">

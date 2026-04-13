@@ -70,15 +70,15 @@ export interface MysteryListItem {
 }
 
 export function generateMurdle(): Promise<{ gameId: string }> {
-  return api<{ gameId: string }>("/murdle", { method: "POST" });
+  return api<{ gameId: string }>("/whodunit", { method: "POST" });
 }
 
 export function getMyMysteries(): Promise<MysteryListItem[]> {
-  return api<MysteryListItem[]>("/murdle/me");
+  return api<MysteryListItem[]>("/whodunit/me");
 }
 
 export function getMurdle(id: string): Promise<MurdleGame> {
-  return api<MurdleGame>(`/murdle/${id}`);
+  return api<MurdleGame>(`/whodunit/${id}`);
 }
 
 export function accuseMurdle(
@@ -86,7 +86,7 @@ export function accuseMurdle(
   accusation: { who: string; how: string; where: string; why: string }
 ): Promise<{ correct: boolean; solution?: MurdleSolution }> {
   return api<{ correct: boolean; solution?: MurdleSolution }>(
-    `/murdle/${id}/accuse`,
+    `/whodunit/${id}/accuse`,
     {
       method: "POST",
       body: JSON.stringify(accusation),
@@ -97,7 +97,7 @@ export function accuseMurdle(
 export function giveUpMurdle(
   id: string
 ): Promise<{ solution: MurdleSolution }> {
-  return api<{ solution: MurdleSolution }>(`/murdle/${id}/give-up`, {
+  return api<{ solution: MurdleSolution }>(`/whodunit/${id}/give-up`, {
     method: "POST",
   });
 }
@@ -106,7 +106,7 @@ export function updateMurdleGrid(
   id: string,
   grid: Record<string, string>
 ): Promise<void> {
-  return api<void>(`/murdle/${id}/grid`, {
+  return api<void>(`/whodunit/${id}/grid`, {
     method: "PATCH",
     body: JSON.stringify({ grid }),
   });
@@ -116,13 +116,13 @@ export function revealMurdleHint(
   id: string,
   n: number
 ): Promise<{ hint: string }> {
-  return api<{ hint: string }>(`/murdle/${id}/hint/${n}`, { method: "POST" });
+  return api<{ hint: string }>(`/whodunit/${id}/hint/${n}`, { method: "POST" });
 }
 
 export function generateMurdleNarrative(
   id: string
 ): Promise<{ narrative: string }> {
-  return api<{ narrative: string }>(`/murdle/${id}/narrative`, {
+  return api<{ narrative: string }>(`/whodunit/${id}/narrative`, {
     method: "POST",
   });
 }

@@ -383,10 +383,10 @@ export default function MurdleGamePage() {
           <div className="text-center space-y-4">
             <p className="text-[oklch(0.65_0.22_27)]">{error ?? "Mystery not found."}</p>
             <button
-              onClick={() => router.push("/murdle")}
+              onClick={() => router.push("/whodunit")}
               className="text-sm text-[oklch(0.60_0_0)] hover:text-[oklch(0.80_0_0)] underline underline-offset-2"
             >
-              Back to Murdle
+              Back to Whodunit
             </button>
           </div>
         </div>
@@ -427,7 +427,7 @@ export default function MurdleGamePage() {
                     textShadow: "0 0 20px oklch(0.45 0.22 15 / 0.4)",
                   }}
                 >
-                  INKQUEST
+                  WHODUNIT
                 </p>
                 <h1
                   className="text-3xl md:text-4xl font-bold uppercase tracking-[0.03em] leading-tight text-[oklch(0.92_0.005_74)]"
@@ -897,7 +897,7 @@ export default function MurdleGamePage() {
                   </div>
 
                   <button
-                    onClick={() => router.push("/murdle")}
+                    onClick={() => router.push("/whodunit")}
                     className="px-6 py-2.5 text-xs font-semibold uppercase tracking-[0.15em] rounded-lg transition-all duration-200 bg-[#DC143C]/10 text-[#DC143C] border border-[#DC143C]/25 hover:bg-[#DC143C]/20"
                   >
                     Play Again
