@@ -10,11 +10,14 @@ export default function TopBar({ onInfo }: { onInfo?: () => void }) {
 
   return (
     <>
-      <div className="sticky top-0 z-20 bg-[oklch(0.07_0.008_65/80%)] backdrop-blur-xl border-b border-[oklch(1_0_0/6%)]">
+      <div
+        className="fixed top-0 inset-x-0 z-20 backdrop-blur-xl border-b"
+        style={{ background: "var(--nav-bg)", borderColor: "var(--bd)" }}
+      >
         <div className="max-w-prose mx-auto px-5 py-3.5 flex items-center justify-between">
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-sm text-[oklch(0.48_0_0)] hover:text-[oklch(0.75_0_0)] transition-colors duration-200"
+            className="flex items-center gap-1.5 text-sm text-[var(--text-lo)] hover:text-[var(--text-hi)] transition-colors duration-200"
           >
             <ArrowLeft size={15} />
             Exit
@@ -24,7 +27,7 @@ export default function TopBar({ onInfo }: { onInfo?: () => void }) {
             {onInfo && (
               <button
                 onClick={onInfo}
-                className="p-2 rounded-lg text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)] transition-all duration-200"
+                className="p-2 rounded-lg text-[var(--text-dim)] hover:text-[var(--text-mid)] hover:bg-[var(--bd)] transition-all duration-200"
                 aria-label="Story info"
               >
                 <Info size={17} />
@@ -33,7 +36,7 @@ export default function TopBar({ onInfo }: { onInfo?: () => void }) {
 
             <button
               onClick={() => setOpen(true)}
-              className="p-2 rounded-lg text-[oklch(0.42_0_0)] hover:text-[oklch(0.72_0_0)] hover:bg-[oklch(1_0_0/5%)] transition-all duration-200"
+              className="p-2 rounded-lg text-[var(--text-dim)] hover:text-[var(--text-mid)] hover:bg-[var(--bd)] transition-all duration-200"
               aria-label="Settings"
             >
               <Settings size={17} />

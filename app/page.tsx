@@ -64,7 +64,7 @@ export default function Home() {
               <h1 className="text-7xl md:text-8xl font-bold tracking-tight ink-gradient leading-[1.05]">
                 Black Ink
               </h1>
-              <p className="max-w-md text-center text-[oklch(0.54_0_0)] text-lg leading-relaxed">
+              <p className="max-w-md text-center text-[var(--text-lo)] text-lg leading-relaxed">
                 Your story. Your choice. Step into worlds forged by AI and shaped by every decision you make.
               </p>
             </div>
@@ -85,7 +85,7 @@ export default function Home() {
               </Link>
             </div>
 
-            <p className="text-xs text-[oklch(0.36_0_0)]">
+            <p className="text-xs text-[var(--text-dim)]">
               Free to start &mdash; no credit card required
             </p>
           </section>
@@ -120,10 +120,10 @@ export default function Home() {
               <p className="text-[10px] font-semibold tracking-[0.22em] uppercase text-[oklch(0.79_0.165_78)] opacity-70">
                 Black Ink
               </p>
-              <h1 className="text-3xl font-bold tracking-tight text-[oklch(0.92_0.005_74)]">
+              <h1 className="text-3xl font-bold tracking-tight text-[var(--text-hi)]">
                 {getGreeting(user!.name)}
               </h1>
-              <p className="text-sm text-[oklch(0.45_0_0)]">
+              <p className="text-sm text-[var(--text-lo)]">
                 Where will you go today?
               </p>
             </div>
@@ -147,12 +147,12 @@ export default function Home() {
 
             {/* Adventures list */}
             {isLoading ? (
-              <div className="text-center text-[oklch(0.40_0_0)] text-sm py-4">
+              <div className="text-center text-[var(--text-dim)] text-sm py-4">
                 Loading adventures…
               </div>
             ) : adventures.length > 0 ? (
               <div className="space-y-3">
-                <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.18em]">
+                <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.18em]">
                   Your Adventures
                 </h2>
 
@@ -164,7 +164,7 @@ export default function Home() {
                       className="group flex justify-between items-center glass-card rounded-xl px-4 py-3.5 hover:border-[oklch(0.79_0.165_78/20%)] hover:bg-[oklch(0.79_0.165_78/4%)] transition-all duration-200"
                     >
                       <div className="min-w-0">
-                        <div className="font-medium text-[oklch(0.90_0.005_74)] group-hover:text-white transition-colors truncate">
+                        <div className="font-medium text-[var(--text-hi)] group-hover:text-[oklch(0.79_0.165_78)] transition-colors truncate">
                           {a.protagonist}
                         </div>
                         <div className="text-xs text-[oklch(0.50_0.04_78)] mt-0.5">
@@ -175,7 +175,7 @@ export default function Home() {
                       <div className="flex items-center gap-2 shrink-0 ml-3">
                         <ChevronRight
                           size={15}
-                          className="text-[oklch(0.36_0_0)] group-hover:text-[oklch(0.79_0.165_78)] transition-colors"
+                          className="text-[var(--text-dim)] group-hover:text-[oklch(0.79_0.165_78)] transition-colors"
                         />
                         <button
                           onClick={async (e) => {
@@ -187,7 +187,7 @@ export default function Home() {
                               prev.filter((s) => s._id !== a._id)
                             );
                           }}
-                          className="p-1.5 rounded-md text-[oklch(0.36_0_0)] hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
+                          className="p-1.5 rounded-md text-[var(--text-dim)] hover:text-red-400 hover:bg-red-500/10 transition-all duration-150"
                           aria-label="Delete story"
                         >
                           <Trash2 size={13} />
@@ -197,7 +197,7 @@ export default function Home() {
                   ))}
                 </div>
 
-                <p className="text-center text-[10px] text-[oklch(0.36_0_0)] pt-1">
+                <p className="text-center text-[10px] text-[var(--text-dim)] pt-1">
                   {adventures.length} {adventures.length === 1 ? "adventure" : "adventures"}
                 </p>
               </div>
@@ -221,10 +221,10 @@ function FeatureCard({
   return (
     <div className="glass-card rounded-2xl px-6 py-7 space-y-3 hover:border-[oklch(0.79_0.165_78/18%)] hover:bg-[oklch(0.79_0.165_78/3%)] transition-all duration-300">
       <div className="text-[oklch(0.79_0.165_78)]">{icon}</div>
-      <h3 className="font-semibold text-[oklch(0.90_0.005_74)] text-sm tracking-wide">
+      <h3 className="font-semibold text-[var(--text-hi)] text-sm tracking-wide">
         {title}
       </h3>
-      <p className="text-sm text-[oklch(0.50_0_0)] leading-relaxed">{description}</p>
+      <p className="text-sm text-[var(--text-lo)] leading-relaxed">{description}</p>
     </div>
   );
 }

@@ -112,7 +112,7 @@ export default function AdventurePage() {
   return (
     <>
       <TopBar onInfo={() => setInfoOpen(true)} />
-      <div className="pb-64 pt-8 px-6">
+      <div className="pb-64 pt-20 px-6">
         {isLoading ? (
           <div className="text-center text-[oklch(0.40_0_0)] text-sm py-12">Loading…</div>
         ) : (

@@ -98,25 +98,25 @@ export default function ProfilePage() {
               {initial}
             </div>
             <div className="text-center">
-              <p className="text-lg font-semibold text-[oklch(0.90_0.005_74)]">{user.name}</p>
-              <p className="text-sm text-[oklch(0.45_0_0)]">{user.email}</p>
+              <p className="text-lg font-semibold text-[var(--text-hi)]">{user.name}</p>
+              <p className="text-sm text-[var(--text-lo)]">{user.email}</p>
             </div>
           </div>
 
           {/* ── Profile section ── */}
           <section className="glass-card rounded-2xl p-6 space-y-5">
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[oklch(0.45_0_0)]">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-lo)]">
               Profile
             </h2>
 
             {user.dateOfBirth && (
               <div className="space-y-1.5">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.42_0_0)]">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-dim)]">
                   Date of Birth
                 </p>
-                <p className="text-sm text-[oklch(0.60_0_0)]">
+                <p className="text-sm text-[var(--text-mid)]">
                   {new Date(user.dateOfBirth + "T00:00:00").toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
-                  <span className="ml-2 text-[10px] text-[oklch(0.35_0_0)] uppercase tracking-wide">· Cannot be changed</span>
+                  <span className="ml-2 text-[10px] text-[var(--text-dim)] uppercase tracking-wide">· Cannot be changed</span>
                 </p>
               </div>
             )}
@@ -162,7 +162,7 @@ export default function ProfilePage() {
 
           {/* ── Password section ── */}
           <section className="glass-card rounded-2xl p-6 space-y-5">
-            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[oklch(0.45_0_0)]">
+            <h2 className="text-xs font-bold uppercase tracking-[0.2em] text-[var(--text-lo)]">
               Change Password
             </h2>
 
@@ -229,16 +229,16 @@ export default function ProfilePage() {
 
 const inputCls = [
   "w-full rounded-lg px-3.5 py-2.5 text-sm border transition-colors",
-  "bg-[oklch(0.10_0.01_65)] border-[oklch(1_0_0/10%)]",
-  "text-[oklch(0.88_0.005_74)] placeholder:text-[oklch(0.32_0_0)]",
-  "focus:outline-none focus:border-[oklch(0.79_0.165_78/40%)] focus:bg-[oklch(0.12_0.01_65)]",
+  "bg-[var(--inp-bg)] border-[var(--bd)]",
+  "text-[var(--text-hi)] placeholder:text-[var(--text-dim)]",
+  "focus:outline-none focus:border-[oklch(0.79_0.165_78/40%)]",
 ].join(" ");
 
 function saveBtnCls(disabled: boolean) {
   return [
     "w-full py-2.5 text-sm font-semibold rounded-lg transition-all duration-200 border",
     disabled
-      ? "bg-[oklch(0.14_0.02_78/50%)] border-[oklch(0.79_0.165_78/10%)] text-[oklch(0.45_0_0)] cursor-not-allowed"
+      ? "bg-[oklch(0.79_0.165_78/8%)] border-[oklch(0.79_0.165_78/10%)] text-[var(--text-lo)] cursor-not-allowed"
       : "bg-[oklch(0.22_0.04_78)] border-[oklch(0.79_0.165_78/30%)] text-[oklch(0.79_0.165_78)] hover:bg-[oklch(0.28_0.05_78)] hover:border-[oklch(0.79_0.165_78/50%)]",
   ].join(" ");
 }
@@ -246,7 +246,7 @@ function saveBtnCls(disabled: boolean) {
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.42_0_0)]">
+      <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-dim)]">
         {label}
       </label>
       {children}

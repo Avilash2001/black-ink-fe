@@ -56,13 +56,13 @@ export default function NewAdventurePage() {
           <h1 className="text-3xl font-bold tracking-tight">
             Start a New Adventure
           </h1>
-          <p className="text-sm text-[oklch(0.48_0_0)] leading-relaxed">
+          <p className="text-sm text-[var(--text-lo)] leading-relaxed">
             Choose a genre and enter your name. The story begins immediately.
           </p>
         </header>
 
         <section className="space-y-3">
-          <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.15em]">
+          <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.15em]">
             Genre
           </h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2.5">
@@ -77,7 +77,7 @@ export default function NewAdventurePage() {
                   "rounded-xl px-4 py-3.5 text-center text-sm font-medium transition-all duration-200 border",
                   genre === title
                     ? "border-[oklch(0.79_0.165_78/65%)] bg-[oklch(0.79_0.165_78/12%)] text-[oklch(0.90_0.12_74)] shadow-[0_0_20px_oklch(0.79_0.165_78/0.15)]"
-                    : "border-[oklch(1_0_0/9%)] bg-[oklch(1_0_0/3%)] text-[oklch(0.70_0_0)] hover:bg-[oklch(1_0_0/6%)] hover:border-[oklch(1_0_0/16%)] hover:text-[oklch(0.90_0_0)]",
+                    : "border-[var(--bd)] bg-[var(--inp-bg)] text-[var(--text-mid)] hover:bg-[var(--card-surface)] hover:border-[var(--bd-strong)] hover:text-[var(--text-hi)]",
                   isCreating ? "opacity-40 pointer-events-none" : "",
                 ].join(" ")}
               >
@@ -88,7 +88,7 @@ export default function NewAdventurePage() {
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.15em]">
+          <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.15em]">
             Your Name
           </h2>
           <Input
@@ -96,12 +96,12 @@ export default function NewAdventurePage() {
             disabled={isCreating}
             onChange={(e) => setName(e.target.value)}
             placeholder="Enter your name"
-            className="h-11 bg-[oklch(1_0_0/4%)] border-[oklch(1_0_0/10%)] focus-visible:border-[oklch(0.79_0.165_78/60%)] focus-visible:ring-[oklch(0.79_0.165_78/20%)]"
+            className="h-11 bg-[var(--inp-bg)] border-[var(--bd)] focus-visible:border-[oklch(0.79_0.165_78/60%)] focus-visible:ring-[oklch(0.79_0.165_78/20%)]"
           />
         </section>
 
         <section className="space-y-3">
-          <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.15em]">
+          <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.15em]">
             Character Gender
           </h2>
           <div className="grid grid-cols-3 gap-2.5">
@@ -114,7 +114,7 @@ export default function NewAdventurePage() {
                   "rounded-xl px-4 py-3.5 capitalize text-sm font-medium transition-all duration-200 border",
                   gender === g
                     ? "border-[oklch(0.79_0.165_78/65%)] bg-[oklch(0.79_0.165_78/12%)] text-[oklch(0.90_0.12_74)] shadow-[0_0_20px_oklch(0.79_0.165_78/0.15)]"
-                    : "border-[oklch(1_0_0/9%)] bg-[oklch(1_0_0/3%)] text-[oklch(0.70_0_0)] hover:bg-[oklch(1_0_0/6%)] hover:border-[oklch(1_0_0/16%)] hover:text-[oklch(0.90_0_0)]",
+                    : "border-[var(--bd)] bg-[var(--inp-bg)] text-[var(--text-mid)] hover:bg-[var(--card-surface)] hover:border-[var(--bd-strong)] hover:text-[var(--text-hi)]",
                   isCreating ? "opacity-40 pointer-events-none" : "",
                 ].join(" ")}
               >
@@ -149,7 +149,7 @@ export default function NewAdventurePage() {
           </Button>
 
           {isCreating && (
-            <p className="text-sm text-[oklch(0.48_0_0)] animate-pulse">
+            <p className="text-sm text-[var(--text-lo)] animate-pulse">
               Weaving the opening scene…
             </p>
           )}

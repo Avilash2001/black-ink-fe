@@ -154,7 +154,7 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
           borderColor: `${murdererColor}30`,
         }}
       >
-        <p className="text-xs uppercase tracking-[0.2em] text-[oklch(0.50_0_0)] mb-1">
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-lo)] mb-1">
           The Murderer
         </p>
         <p
@@ -166,23 +166,23 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
       </div>
 
       <div className="space-y-2">
-        <p className="text-xs uppercase tracking-[0.2em] text-[oklch(0.40_0_0)]">
+        <p className="text-xs uppercase tracking-[0.2em] text-[var(--text-dim)]">
           Full Assignments
         </p>
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[oklch(1_0_0/8%)]">
-                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
+              <tr className="border-b border-[var(--bd)]">
+                <th className="text-left py-2.5 pr-4 text-[var(--text-dim)] font-semibold tracking-wide uppercase text-xs">
                   Suspect
                 </th>
-                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
+                <th className="text-left py-2.5 pr-4 text-[var(--text-dim)] font-semibold tracking-wide uppercase text-xs">
                   Weapon
                 </th>
-                <th className="text-left py-2.5 pr-4 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
+                <th className="text-left py-2.5 pr-4 text-[var(--text-dim)] font-semibold tracking-wide uppercase text-xs">
                   Location
                 </th>
-                <th className="text-left py-2.5 text-[oklch(0.40_0_0)] font-semibold tracking-wide uppercase text-xs">
+                <th className="text-left py-2.5 text-[var(--text-dim)] font-semibold tracking-wide uppercase text-xs">
                   Motive
                 </th>
               </tr>
@@ -192,12 +192,12 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
                 const suspect = game.suspects.find((s) => s.name === a.suspect);
                 const color = suspect
                   ? SUSPECT_COLORS[suspect.color] ?? suspect.color
-                  : "oklch(0.88 0.005 74)";
+                  : "var(--text-mid)";
                 const isMurderer = a.suspect === solution.murderer;
                 return (
                   <tr
                     key={a.suspect}
-                    className="border-b border-[oklch(1_0_0/5%)]"
+                    className="border-b border-[var(--bd)]"
                     style={
                       isMurderer ? { background: `${color}08` } : undefined
                     }
@@ -210,13 +210,13 @@ function SolutionReveal({ solution, game }: { solution: MurdleSolution; game: Mu
                         </span>
                       )}
                     </td>
-                    <td className="py-2 pr-3 text-[oklch(0.70_0_0)]">
+                    <td className="py-2 pr-3 text-[var(--text-mid)]">
                       {a.weapon}
                     </td>
-                    <td className="py-2 pr-3 text-[oklch(0.70_0_0)]">
+                    <td className="py-2 pr-3 text-[var(--text-mid)]">
                       {a.location}
                     </td>
-                    <td className="py-2 text-[oklch(0.70_0_0)]">{a.motive}</td>
+                    <td className="py-2 text-[var(--text-mid)]">{a.motive}</td>
                   </tr>
                 );
               })}
@@ -367,8 +367,8 @@ export default function MurdleGamePage() {
         <HomeBar />
         <div className="min-h-screen flex items-center justify-center">
           <div className="text-center space-y-3">
-            <div className="w-6 h-6 border-2 border-[oklch(1_0_0/15%)] border-t-[#DC143C] rounded-full animate-spin mx-auto" />
-            <p className="text-sm text-[oklch(0.45_0_0)]">Loading mystery...</p>
+            <div className="w-6 h-6 border-2 border-[var(--bd-strong)] border-t-[#DC143C] rounded-full animate-spin mx-auto" />
+            <p className="text-sm text-[var(--text-lo)]">Loading mystery...</p>
           </div>
         </div>
       </>
@@ -384,7 +384,7 @@ export default function MurdleGamePage() {
             <p className="text-[oklch(0.65_0.22_27)]">{error ?? "Mystery not found."}</p>
             <button
               onClick={() => router.push("/whodunit")}
-              className="text-sm text-[oklch(0.60_0_0)] hover:text-[oklch(0.80_0_0)] underline underline-offset-2"
+              className="text-sm text-[var(--text-mid)] hover:text-[var(--text-hi)] underline underline-offset-2"
             >
               Back to Whodunit
             </button>
@@ -430,7 +430,7 @@ export default function MurdleGamePage() {
                   WHODUNIT
                 </p>
                 <h1
-                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.03em] leading-tight text-[oklch(0.92_0.005_74)]"
+                  className="text-3xl md:text-4xl font-bold uppercase tracking-[0.03em] leading-tight text-[var(--text-hi)]"
                   style={{ fontFamily: "var(--font-story, Georgia, serif)" }}
                 >
                   {game.title}
@@ -462,10 +462,10 @@ export default function MurdleGamePage() {
 
               {/* 2. Intro */}
               <div className="glass-card rounded-xl px-5 py-4 space-y-2">
-                <p className="text-sm sm:text-base text-[oklch(0.75_0.01_74)] leading-relaxed italic">
+                <p className="text-sm sm:text-base text-[var(--text-mid)] leading-relaxed italic">
                   {game.intro}
                 </p>
-                <p className="text-sm text-[oklch(0.45_0_0)] leading-relaxed">
+                <p className="text-sm text-[var(--text-lo)] leading-relaxed">
                   Each of the four suspects brought exactly one weapon to one
                   location, and each had exactly one motive. Only one of them is
                   the murderer — and the clues below are enough to prove it.
@@ -489,9 +489,9 @@ export default function MurdleGamePage() {
                               background: "oklch(0.35 0.15 15 / 15%)",
                             }
                           : {
-                              borderColor: "oklch(1 0 0 / 8%)",
-                              color: "oklch(0.42 0 0)",
-                              background: "oklch(1 0 0 / 3%)",
+                              borderColor: "var(--bd)",
+                              color: "var(--text-dim)",
+                              background: "var(--inp-bg)",
                             }
                       }
                     >
@@ -512,50 +512,50 @@ export default function MurdleGamePage() {
                         const hex = SUSPECT_COLORS[s.color] ?? s.color;
                         const emoji = suspectEmojis.get(s.name) ?? "🕵️";
                         return (
-                          <div key={s.name} className="flex flex-col items-center rounded-2xl border overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)", borderColor: hex + "40" }}>
+                          <div key={s.name} className="flex flex-col items-center rounded-2xl border overflow-hidden" style={{ background: "var(--card-surface)", borderColor: hex + "40" }}>
                             <div className="flex-1 flex items-center justify-center pt-8 pb-4">
                               <span className="text-7xl select-none" style={{ filter: `drop-shadow(0 0 16px ${hex}70)` }}>{emoji}</span>
                             </div>
                             <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
                               <p className="font-black uppercase tracking-wider text-sm leading-tight" style={{ color: hex, fontFamily: "monospace" }}>{s.name}</p>
-                              <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{s.description}</p>
+                              <p className="text-[11px] text-[var(--text-lo)] leading-snug">{s.description}</p>
                             </div>
                           </div>
                         );
                       })}
 
                       {activeCardTab === "weapons" && game.weapons.map((w) => (
-                        <div key={w.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                        <div key={w.name} className="flex flex-col items-center rounded-2xl border border-[var(--bd)] overflow-hidden" style={{ background: "var(--card-surface)" }}>
                           <div className="flex-1 flex items-end justify-center pt-8 pb-3">
                             <span className="text-6xl select-none">{getItemEmoji(w.name, "weapon", weaponEmojis)}</span>
                           </div>
                           <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
-                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{w.name}</p>
-                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{w.description}</p>
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[var(--text-hi)]" style={{ fontFamily: "monospace" }}>{w.name}</p>
+                            <p className="text-[11px] text-[var(--text-lo)] leading-snug">{w.description}</p>
                           </div>
                         </div>
                       ))}
 
                       {activeCardTab === "locations" && game.locations.map((l) => (
-                        <div key={l.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                        <div key={l.name} className="flex flex-col items-center rounded-2xl border border-[var(--bd)] overflow-hidden" style={{ background: "var(--card-surface)" }}>
                           <div className="flex-1 flex items-end justify-center pt-8 pb-3">
                             <span className="text-6xl select-none">{getItemEmoji(l.name, "location", locationEmojis)}</span>
                           </div>
                           <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
-                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{l.name}</p>
-                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{l.description}</p>
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[var(--text-hi)]" style={{ fontFamily: "monospace" }}>{l.name}</p>
+                            <p className="text-[11px] text-[var(--text-lo)] leading-snug">{l.description}</p>
                           </div>
                         </div>
                       ))}
 
                       {activeCardTab === "motives" && game.motives.map((m) => (
-                        <div key={m.name} className="flex flex-col items-center rounded-2xl border border-[oklch(1_0_0/10%)] overflow-hidden" style={{ background: "oklch(0.14 0.015 65 / 90%)" }}>
+                        <div key={m.name} className="flex flex-col items-center rounded-2xl border border-[var(--bd)] overflow-hidden" style={{ background: "var(--card-surface)" }}>
                           <div className="flex-1 flex items-end justify-center pt-8 pb-3">
                             <span className="text-6xl select-none">{getItemEmoji(m.name, "motive", motiveEmojis)}</span>
                           </div>
                           <div className="w-full px-4 pb-5 pt-2 text-center space-y-1">
-                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[oklch(0.90_0.005_74)]" style={{ fontFamily: "monospace" }}>{m.name}</p>
-                            <p className="text-[11px] text-[oklch(0.55_0_0)] leading-snug">{m.description}</p>
+                            <p className="font-black uppercase tracking-wider text-sm leading-tight text-[var(--text-hi)]" style={{ fontFamily: "monospace" }}>{m.name}</p>
+                            <p className="text-[11px] text-[var(--text-lo)] leading-snug">{m.description}</p>
                           </div>
                         </div>
                       ))}
@@ -568,15 +568,15 @@ export default function MurdleGamePage() {
               {!gameOver && (
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)]">
+                    <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--text-dim)]">
                       Detective Hints
                     </h2>
-                    <span className="text-[9px] text-[oklch(0.32_0_0)]">
+                    <span className="text-[9px] text-[var(--text-dim)]">
                       {hints.filter(Boolean).length}/3 revealed
                     </span>
                   </div>
                   {!game.hintsReady ? (
-                    <p className="text-xs text-[oklch(0.38_0_0)] italic">
+                    <p className="text-xs text-[var(--text-dim)] italic">
                       Hints are being prepared…
                     </p>
                   ) : (
@@ -600,8 +600,8 @@ export default function MurdleGamePage() {
               <div
                 className="rounded-xl border px-5 py-5 space-y-3"
                 style={{
-                  background: "oklch(0.13 0.015 65 / 60%)",
-                  borderColor: "oklch(0.55 0.15 15 / 15%)",
+                  background: "var(--card-surface)",
+                  borderColor: "oklch(0.55 0.15 15 / 25%)",
                 }}
               >
                 <h2
@@ -614,7 +614,7 @@ export default function MurdleGamePage() {
                   {game.clues.map((clue, i) => (
                     <li
                       key={i}
-                      className="flex gap-3 text-sm sm:text-base text-[oklch(0.80_0.005_74)] leading-relaxed"
+                      className="flex gap-3 text-sm sm:text-base text-[var(--text-mid)] leading-relaxed"
                     >
                       <span
                         className="shrink-0 font-bold text-sm mt-0.5"
@@ -632,14 +632,14 @@ export default function MurdleGamePage() {
               <div
                 className="rounded-xl border px-5 py-5 space-y-4"
                 style={{
-                  background: "oklch(0.13 0.015 65 / 60%)",
-                  borderColor: "oklch(0.55 0.15 280 / 15%)",
+                  background: "var(--card-surface)",
+                  borderColor: "oklch(0.55 0.15 280 / 25%)",
                 }}
               >
-                <h2 className="text-sm font-bold uppercase tracking-[0.25em] text-[oklch(0.55_0.10_280)]">
+                <h2 className="text-sm font-bold uppercase tracking-[0.25em] text-[oklch(0.55_0.18_280)]">
                   Suspect Statements
                 </h2>
-                <p className="text-xs text-[oklch(0.42_0_0)] italic">
+                <p className="text-xs text-[var(--text-dim)] italic">
                   Innocent suspects always tell the truth. The killer always lies.
                 </p>
                 <div className="space-y-4">
@@ -649,7 +649,7 @@ export default function MurdleGamePage() {
                     );
                     const hex = suspect
                       ? SUSPECT_COLORS[suspect.color] ?? suspect.color
-                      : "oklch(0.70 0 0)";
+                      : "var(--text-mid)";
                     return (
                       <div
                         key={i}
@@ -661,7 +661,7 @@ export default function MurdleGamePage() {
                         >
                           {stmt.suspect}:
                         </span>
-                        <p className="text-sm sm:text-base text-[oklch(0.75_0.005_74)] leading-relaxed italic">
+                        <p className="text-sm sm:text-base text-[var(--text-mid)] leading-relaxed italic">
                           &ldquo;{stmt.text}&rdquo;
                         </p>
                       </div>
@@ -764,7 +764,7 @@ export default function MurdleGamePage() {
                     <button
                       onClick={handleGiveUp}
                       disabled={isGivingUp}
-                      className="px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] rounded-lg transition-all duration-200 text-[oklch(0.42_0_0)] border border-[oklch(1_0_0/8%)] hover:text-[oklch(0.65_0_0)] hover:border-[oklch(1_0_0/15%)]"
+                      className="px-6 py-3 text-xs font-semibold uppercase tracking-[0.15em] rounded-lg transition-all duration-200 text-[var(--text-dim)] border border-[var(--bd)] hover:text-[var(--text-mid)] hover:border-[var(--bd-strong)]"
                     >
                       {isGivingUp ? "Giving up..." : "Give Up"}
                     </button>
@@ -777,21 +777,21 @@ export default function MurdleGamePage() {
                       <p className="text-sm font-bold text-[oklch(0.72_0.15_145)] uppercase tracking-wide">
                         Correct! You solved the mystery.
                       </p>
-                      <p className="text-xs text-[oklch(0.50_0_0)]">
+                      <p className="text-xs text-[var(--text-lo)]">
                         Your accusation:{" "}
-                        <span className="text-[oklch(0.70_0_0)]">
+                        <span className="text-[var(--text-mid)]">
                           {game.playerAccusation?.who}
                         </span>{" "}
                         with the{" "}
-                        <span className="text-[oklch(0.70_0_0)]">
+                        <span className="text-[var(--text-mid)]">
                           {game.playerAccusation?.how}
                         </span>{" "}
                         in the{" "}
-                        <span className="text-[oklch(0.70_0_0)]">
+                        <span className="text-[var(--text-mid)]">
                           {game.playerAccusation?.where}
                         </span>
                         , motivated by{" "}
-                        <span className="text-[oklch(0.70_0_0)]">
+                        <span className="text-[var(--text-mid)]">
                           {game.playerAccusation?.why}
                         </span>
                         .
@@ -802,7 +802,7 @@ export default function MurdleGamePage() {
                       <p className="text-sm font-bold text-[oklch(0.65_0.22_27)] uppercase tracking-wide">
                         The mystery remains unsolved.
                       </p>
-                      <p className="text-xs text-[oklch(0.48_0_0)]">
+                      <p className="text-xs text-[var(--text-lo)]">
                         The full solution has been revealed below.
                       </p>
                     </div>
@@ -819,19 +819,19 @@ export default function MurdleGamePage() {
                   <div
                     className="rounded-xl border overflow-hidden"
                     style={{
-                      background: "oklch(0.09 0.018 65 / 85%)",
-                      borderColor: "oklch(0.55 0.10 65 / 20%)",
+                      background: "var(--card-surface-2)",
+                      borderColor: "var(--bd-strong)",
                     }}
                   >
                     {/* Header */}
                     <div
                       className="flex items-center gap-2 px-5 py-3 border-b"
-                      style={{ borderColor: "oklch(0.55 0.10 65 / 15%)" }}
+                      style={{ borderColor: "var(--bd)" }}
                     >
                       <span className="text-base">🪶</span>
                       <span
                         className="text-[9px] font-bold uppercase tracking-[0.22em]"
-                        style={{ color: "oklch(0.55 0.12 65)" }}
+                        style={{ color: "var(--text-lo)" }}
                       >
                         Detective&apos;s Closing Notes
                       </span>
@@ -848,7 +848,7 @@ export default function MurdleGamePage() {
                                 height: 10,
                                 width: `${w}%`,
                                 borderRadius: 4,
-                                background: "oklch(0.22 0.005 65 / 60%)",
+                                background: "var(--bd-strong)",
                               }}
                             />
                           ))}
@@ -879,7 +879,7 @@ export default function MurdleGamePage() {
                                 key={i}
                                 className="text-[12px] leading-relaxed"
                                 style={{
-                                  color: i === 0 ? "oklch(0.78 0.04 65)" : "oklch(0.60 0.02 65)",
+                                  color: i === 0 ? "var(--text-mid)" : "var(--text-lo)",
                                   fontStyle: i === paras.length - 1 ? "italic" : "normal",
                                 }}
                               >
@@ -889,7 +889,7 @@ export default function MurdleGamePage() {
                           })()}
                         </div>
                       ) : (
-                        <p className="text-[11px] text-[oklch(0.38_0_0)]">
+                        <p className="text-[11px] text-[var(--text-dim)]">
                           Narrative unavailable.
                         </p>
                       )}
@@ -912,12 +912,12 @@ export default function MurdleGamePage() {
                 <div
                   className="rounded-xl border p-4"
                   style={{
-                    background: "oklch(0.10 0.012 65 / 80%)",
-                    borderColor: "oklch(1 0 0 / 8%)",
+                    background: "var(--card-surface-2)",
+                    borderColor: "var(--bd)",
                     backdropFilter: "blur(16px)",
                   }}
                 >
-                  <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)] mb-3">
+                  <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--text-dim)] mb-3">
                     Deduction Grid
                   </h2>
                   <DeductionGrid
@@ -939,8 +939,8 @@ export default function MurdleGamePage() {
           onClick={() => setGridModalOpen(true)}
           className="lg:hidden fixed bottom-5 right-4 z-40 flex items-center gap-2 px-4 py-3 rounded-full text-xs font-bold uppercase tracking-[0.15em] shadow-lg transition-all duration-200"
           style={{
-            background: "oklch(0.14 0.025 15 / 95%)",
-            border: "1px solid oklch(0.55 0.18 15 / 35%)",
+            background: "var(--card-surface)",
+            border: "1px solid oklch(0.55 0.18 15 / 40%)",
             color: "#DC143C",
             backdropFilter: "blur(12px)",
             boxShadow: "0 0 20px oklch(0.35 0.22 15 / 0.25)",
@@ -955,19 +955,19 @@ export default function MurdleGamePage() {
       {gridModalOpen && (
         <div
           className="lg:hidden fixed inset-0 z-50 flex flex-col"
-          style={{ background: "oklch(0.08 0.010 65)" }}
+          style={{ background: "var(--background)" }}
         >
           {/* Header bar */}
           <div
             className="flex items-center justify-between px-4 py-3 border-b flex-shrink-0"
-            style={{ borderColor: "oklch(1 0 0 / 8%)" }}
+            style={{ borderColor: "var(--bd)" }}
           >
-            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[oklch(0.42_0_0)]">
+            <h2 className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--text-dim)]">
               Deduction Grid
             </h2>
             <button
               onClick={() => setGridModalOpen(false)}
-              className="text-[oklch(0.40_0_0)] hover:text-[oklch(0.70_0_0)] transition-colors text-xl leading-none px-1"
+              className="text-[var(--text-dim)] hover:text-[var(--text-mid)] transition-colors text-xl leading-none px-1"
             >
               ✕
             </button>
@@ -1048,7 +1048,7 @@ function GameTimer({ game }: { game: MurdleGame }) {
     );
   }
   return (
-    <span className="flex items-center gap-1.5 text-xs font-semibold text-[oklch(0.45_0_0)]">
+    <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-lo)]">
       <Timer size={13} />
       {formatDuration(elapsed)}
     </span>
@@ -1083,24 +1083,24 @@ function HintCard({
       className="rounded-xl border p-4 space-y-3 transition-all duration-200"
       style={{
         background: isRevealed
-          ? "oklch(0.16 0.025 15 / 60%)"
-          : "oklch(0.11 0.01 65 / 50%)",
+          ? "oklch(0.50 0.12 15 / 8%)"
+          : "var(--card-surface)",
         borderColor: isRevealed
-          ? "oklch(0.55 0.18 15 / 25%)"
-          : "oklch(1 0 0 / 7%)",
+          ? "oklch(0.55 0.18 15 / 30%)"
+          : "var(--bd)",
       }}
     >
       <div className="flex items-center justify-between gap-2">
         <div>
-          <p className="text-xs font-bold uppercase tracking-[0.18em]" style={{ color: isRevealed ? "#DC143C" : "oklch(0.38 0 0)" }}>
+          <p className="text-xs font-bold uppercase tracking-[0.18em]" style={{ color: isRevealed ? "#DC143C" : "var(--text-dim)" }}>
             {labels[n]}
           </p>
-          <p className="text-[10px] text-[oklch(0.35_0_0)]">{subtitles[n]}</p>
+          <p className="text-[10px] text-[var(--text-dim)]">{subtitles[n]}</p>
         </div>
 
         {!isRevealed && (
           isLocked ? (
-            <span className="text-[10px] text-[oklch(0.38_0_0)] font-mono">
+            <span className="text-[10px] text-[var(--text-dim)] font-mono">
               {!prevRevealed ? "Reveal previous hint first" : countdown ? `🔒 ${countdown}` : "..."}
             </span>
           ) : (
@@ -1121,7 +1121,7 @@ function HintCard({
       </div>
 
       {isRevealed && (
-        <p className="text-sm text-[oklch(0.75_0.005_74)] leading-relaxed italic border-t border-[oklch(1_0_0/8%)] pt-3">
+        <p className="text-sm text-[var(--text-mid)] leading-relaxed italic border-t border-[var(--bd)] pt-3">
           &ldquo;{hints[n]}&rdquo;
         </p>
       )}
@@ -1144,7 +1144,7 @@ function AccusationSelect({
 }) {
   return (
     <div className="space-y-1.5">
-      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[oklch(0.45_0_0)]">
+      <label className="text-[10px] font-bold uppercase tracking-[0.2em] text-[var(--text-lo)]">
         {label}
       </label>
       <select
@@ -1152,9 +1152,9 @@ function AccusationSelect({
         onChange={(e) => onChange(e.target.value)}
         className={[
           "w-full rounded-lg px-3 py-2.5 text-sm border transition-colors",
-          "bg-[oklch(0.10_0.01_65)] border-[oklch(1_0_0/10%)]",
-          "text-[oklch(0.85_0.005_74)] focus:outline-none",
-          "focus:border-[oklch(0.55_0.15_15/50%)] focus:bg-[oklch(0.12_0.01_65)]",
+          "bg-[var(--inp-bg)] border-[var(--bd)]",
+          "text-[var(--text-hi)] focus:outline-none",
+          "focus:border-[oklch(0.55_0.15_15/50%)]",
           "appearance-none cursor-pointer",
         ].join(" ")}
         style={
@@ -1162,19 +1162,19 @@ function AccusationSelect({
             ? {
                 color:
                   options.find((o) => o.value === value)?.color ??
-                  "oklch(0.85 0.005 74)",
+                  "var(--text-hi)",
               }
             : undefined
         }
       >
-        <option value="" className="text-[oklch(0.42_0_0)] bg-[oklch(0.10_0.01_65)]">
+        <option value="" className="text-[var(--text-dim)] bg-[var(--inp-bg)]">
           {placeholder}
         </option>
         {options.map((opt) => (
           <option
             key={opt.value}
             value={opt.value}
-            className="bg-[oklch(0.10_0.01_65)] text-[oklch(0.85_0.005_74)]"
+            className="bg-[var(--inp-bg)] text-[var(--text-hi)]"
           >
             {opt.label}
           </option>

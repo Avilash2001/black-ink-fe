@@ -49,7 +49,7 @@ function MysteryTimer({ mystery }: { mystery: MysteryListItem }) {
     );
   }
   return (
-    <span className="flex items-center gap-1 text-[9px] font-semibold text-[oklch(0.45_0_0)]">
+    <span className="flex items-center gap-1 text-[9px] font-semibold text-[var(--text-dim)]">
       <Timer size={10} />
       {formatDuration(elapsed)}
     </span>
@@ -119,7 +119,7 @@ export default function WhodunitPage() {
             >
               Whodunit
             </h1>
-            <p className="text-[oklch(0.55_0_0)] text-sm leading-relaxed max-w-sm mx-auto">
+            <p className="text-[var(--text-lo)] text-sm leading-relaxed max-w-sm mx-auto">
               The AI that writes your adventures also stages murders. Every mystery is unique — study the clues, cross-examine the suspects, and name the killer before the case goes cold.
             </p>
           </div>
@@ -128,7 +128,7 @@ export default function WhodunitPage() {
           <div className="flex flex-col items-center gap-3">
             {!user ? (
               <>
-                <p className="text-xs text-[oklch(0.42_0_0)]">Sign in to generate and save your mysteries.</p>
+                <p className="text-xs text-[var(--text-dim)]">Sign in to generate and save your mysteries.</p>
                 <Link href="/login">
                   <button className="px-10 py-3 text-sm font-bold uppercase tracking-[0.18em] rounded-lg bg-[#DC143C] text-white border border-[#DC143C] hover:bg-[#c01236] shadow-[0_0_24px_oklch(0.45_0.22_15/0.3)] hover:shadow-[0_0_40px_oklch(0.45_0.22_15/0.5)] transition-all duration-300">
                     Sign In to Play
@@ -152,7 +152,7 @@ export default function WhodunitPage() {
                   )}
                 </button>
                 {isGenerating && (
-                  <p className="text-xs text-[oklch(0.40_0_0)] animate-pulse">
+                  <p className="text-xs text-[var(--text-dim)] animate-pulse">
                     The AI is planting clues and choosing a killer...
                   </p>
                 )}
@@ -165,7 +165,7 @@ export default function WhodunitPage() {
 
           {/* How to play */}
           <div className="glass-card rounded-xl px-6 py-5 space-y-3">
-            <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.2em]">
+            <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.2em]">
               How it works
             </h2>
             <div className="space-y-3 text-sm text-[oklch(0.55_0_0)] leading-relaxed">
@@ -179,18 +179,18 @@ export default function WhodunitPage() {
           {/* Past mysteries */}
           {user && (
             <div className="space-y-3">
-              <h2 className="text-[10px] font-semibold text-[oklch(0.40_0_0)] uppercase tracking-[0.18em]">
+              <h2 className="text-[10px] font-semibold text-[var(--text-dim)] uppercase tracking-[0.18em]">
                 Your Cases
               </h2>
 
               {mysteriesLoading ? (
-                <p className="text-center text-[oklch(0.38_0_0)] text-sm py-4">
+                <p className="text-center text-[var(--text-dim)] text-sm py-4">
                   Loading cases…
                 </p>
               ) : mysteries.length === 0 ? (
                 <div className="glass-card rounded-xl px-5 py-6 text-center space-y-2">
-                  <Search size={20} className="mx-auto text-[oklch(0.32_0_0)]" strokeWidth={1.5} />
-                  <p className="text-sm text-[oklch(0.38_0_0)]">No cases yet. Generate your first mystery above.</p>
+                  <Search size={20} className="mx-auto text-[var(--text-dim)]" strokeWidth={1.5} />
+                  <p className="text-sm text-[var(--text-dim)]">No cases yet. Generate your first mystery above.</p>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -201,7 +201,7 @@ export default function WhodunitPage() {
                       className="group flex justify-between items-center glass-card rounded-xl px-4 py-3.5 hover:border-[oklch(0.55_0.15_15/20%)] hover:bg-[oklch(0.55_0.15_15/4%)] transition-all duration-200"
                     >
                       <div className="min-w-0 space-y-1">
-                        <p className="text-xs font-semibold text-[oklch(0.80_0.005_74)] group-hover:text-white transition-colors truncate uppercase tracking-wide">
+                        <p className="text-xs font-semibold text-[var(--text-hi)] group-hover:text-[#DC143C] transition-colors truncate uppercase tracking-wide">
                           {m.title}
                         </p>
                         <div className="flex items-center gap-2">
@@ -212,7 +212,7 @@ export default function WhodunitPage() {
                                 ? { background: "oklch(0.30 0.08 145 / 20%)", color: "oklch(0.65 0.12 145)" }
                                 : m.givenUp
                                 ? { background: "oklch(0.35 0.10 27 / 20%)", color: "oklch(0.60 0.18 27)" }
-                                : { background: "oklch(1 0 0 / 6%)", color: "oklch(0.45 0 0)" }
+                                : { background: "var(--bd)", color: "var(--text-lo)" }
                             }
                           >
                             {m.solved ? "Solved" : m.givenUp ? "Unsolved" : "Open"}
@@ -222,7 +222,7 @@ export default function WhodunitPage() {
                       </div>
                       <ChevronRight
                         size={15}
-                        className="text-[oklch(0.32_0_0)] group-hover:text-[#DC143C] transition-colors shrink-0 ml-3"
+                        className="text-[var(--text-dim)] group-hover:text-[#DC143C] transition-colors shrink-0 ml-3"
                       />
                     </Link>
                   ))}

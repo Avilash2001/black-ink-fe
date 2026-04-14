@@ -22,6 +22,7 @@ interface AuthContextType {
   signUp: typeof register;
   signOut: () => Promise<void>;
   updateMatureContent: (value: boolean) => Promise<void>;
+  updateTheme: (theme: 'dark' | 'light') => Promise<void>;
   setDateOfBirth: (dob: string) => Promise<void>;
   updateProfile: (patch: { name?: string; email?: string }) => Promise<void>;
   changePassword: (currentPassword: string, newPassword: string) => Promise<void>;
@@ -103,6 +104,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const updateThemeFn = async (theme: 'dark' | 'light') => {
+    if (!user) return;
+    const prev = user;
+    const optimistic: Session = { ...user, theme };
+    setUser(optimistic);
+    storeSession(optimistic);
+    try {
+      const updated = await updateMe({ theme });
+      setUser(updated);
+      storeSession(updated);
+    } catch {
+      setUser(prev);
+      storeSession(prev);
+    }
+  };
+
   const setDateOfBirthFn = async (dob: string) => {
     const updated = await setDateOfBirth(dob);
     setUser(updated);
@@ -120,7 +137,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent, setDateOfBirth: setDateOfBirthFn, updateProfile: updateProfileFn, changePassword: changePasswordFn }}>
+    <AuthContext.Provider value={{ user, isLoading, signIn, signUp, signOut, updateMatureContent, updateTheme: updateThemeFn, setDateOfBirth: setDateOfBirthFn, updateProfile: updateProfileFn, changePassword: changePasswordFn }}>
       {children}
     </AuthContext.Provider>
   );

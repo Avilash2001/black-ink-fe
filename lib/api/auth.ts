@@ -6,6 +6,7 @@ export async function login(email: string, password: string) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    theme: 'dark' | 'light';
     dateOfBirth: string | null;
   }>("/auth/login", {
     method: "POST",
@@ -30,16 +31,18 @@ export async function getMe() {
     name: string;
     email: string;
     matureEnabled: boolean;
+    theme: 'dark' | 'light';
     dateOfBirth: string | null;
   }>("/auth/me");
 }
 
-export async function updateMe(patch: { matureEnabled?: boolean }) {
+export async function updateMe(patch: { matureEnabled?: boolean; theme?: 'dark' | 'light' }) {
   return api<{
     id: string;
     name: string;
     email: string;
     matureEnabled: boolean;
+    theme: 'dark' | 'light';
     dateOfBirth: string | null;
   }>("/auth/me", {
     method: "PATCH",
@@ -53,6 +56,7 @@ export async function updateProfile(patch: { name?: string; email?: string }) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    theme: 'dark' | 'light';
     dateOfBirth: string | null;
   }>("/auth/me/profile", {
     method: "PATCH",
@@ -73,6 +77,7 @@ export async function setDateOfBirth(dateOfBirth: string) {
     name: string;
     email: string;
     matureEnabled: boolean;
+    theme: 'dark' | 'light';
     dateOfBirth: string | null;
   }>("/auth/me/dob", {
     method: "POST",

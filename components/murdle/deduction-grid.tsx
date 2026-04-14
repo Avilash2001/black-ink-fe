@@ -314,7 +314,7 @@ function CellSymbol({ state, size }: { state: CellState; size: number }) {
     return <span style={{ color: "#a855f7", fontWeight: 800, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✗</span>;
   // Auto-placed x from check propagation — dim grey
   if (state === "x_auto")
-    return <span style={{ color: "rgba(255,255,255,0.22)", fontWeight: 700, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✗</span>;
+    return <span style={{ color: "var(--text-lo)", fontWeight: 700, fontSize: fs, lineHeight: 1, userSelect: "none" }}>✗</span>;
   if (state === "suspicion")
     return <span style={{ color: "#f97316", fontWeight: 800, fontSize: fs, lineHeight: 1, userSelect: "none" }}>?</span>;
   return null;
@@ -509,7 +509,7 @@ export default function DeductionGrid({
           marginBottom: 6,
           padding: "0 4px",
           borderRadius: 6,
-          background: tooltip ? "rgba(255,255,255,0.05)" : "transparent",
+          background: tooltip ? "var(--bd)" : "transparent",
           transition: "background 0.15s",
           overflow: "hidden",
         }}
@@ -525,7 +525,7 @@ export default function DeductionGrid({
                 fontWeight: 700,
                 letterSpacing: "0.14em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.28)",
+                color: "var(--text-lo)",
                 flexShrink: 0,
               }}
             >
@@ -537,7 +537,7 @@ export default function DeductionGrid({
                 fontWeight: 700,
                 letterSpacing: "0.05em",
                 textTransform: "uppercase",
-                color: tooltip.color ?? "rgba(255,255,255,0.82)",
+                color: tooltip.color ?? "var(--text-hi)",
                 overflow: "hidden",
                 textOverflow: "ellipsis",
                 whiteSpace: "nowrap",
@@ -550,7 +550,7 @@ export default function DeductionGrid({
           <span
             style={{
               fontSize: 8,
-              color: "rgba(255,255,255,0.18)",
+              color: "var(--text-lo)",
               letterSpacing: "0.12em",
               textTransform: "uppercase",
             }}
@@ -561,7 +561,7 @@ export default function DeductionGrid({
         {/* Click to cycle + Reset live in toolbar row on the right */}
         <span style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
           {!tooltip && (
-            <span style={{ fontSize: 8, color: "rgba(255,255,255,0.15)" }}>
+            <span style={{ fontSize: 8, color: "var(--text-lo)" }}>
               Click to cycle
             </span>
           )}
@@ -574,8 +574,8 @@ export default function DeductionGrid({
                 fontWeight: 700,
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
-                color: "rgba(255,255,255,0.35)",
-                border: "1px solid rgba(255,255,255,0.12)",
+                color: "var(--text-lo)",
+                border: "1px solid var(--bd-strong)",
                 borderRadius: 4,
                 padding: "2px 6px",
                 background: "transparent",
@@ -583,7 +583,7 @@ export default function DeductionGrid({
                 lineHeight: 1.4,
               }}
               onMouseEnter={(e) => { e.currentTarget.style.color = "#DC143C"; e.currentTarget.style.borderColor = "rgba(220,20,60,0.4)"; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = "rgba(255,255,255,0.35)"; e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = "var(--text-lo)"; e.currentTarget.style.borderColor = "var(--bd-strong)"; }}
             >
               Reset
             </button>
@@ -603,7 +603,7 @@ export default function DeductionGrid({
         <span
           style={{
             fontSize: 8,
-            color: "rgba(255,255,255,0.25)",
+            color: "var(--text-lo)",
             textTransform: "uppercase",
             letterSpacing: "0.15em",
             fontWeight: 600,
@@ -614,7 +614,7 @@ export default function DeductionGrid({
         {[
           ["✓", "#22c55e", "Confirmed"],
           ["✗", "#a855f7", "Eliminated"],
-          ["✗", "rgba(255,255,255,0.22)", "Auto-elim"],
+          ["✗", "var(--text-lo)", "Auto-elim"],
           ["?", "#f97316", "Suspicious"],
         ].map(([sym, col, lbl]) => (
           <span
@@ -627,7 +627,7 @@ export default function DeductionGrid({
             }}
           >
             <span style={{ color: col, fontWeight: 800 }}>{sym}</span>
-            <span style={{ color: "rgba(255,255,255,0.30)" }}>{lbl}</span>
+            <span style={{ color: "var(--text-lo)" }}>{lbl}</span>
           </span>
         ))}
       </div>
@@ -660,7 +660,7 @@ export default function DeductionGrid({
                     fontWeight: 700,
                     letterSpacing: "0.18em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.28)",
+                    color: "var(--text-lo)",
                     whiteSpace: "nowrap",
                   }}
                 >
@@ -686,7 +686,7 @@ export default function DeductionGrid({
                   marginLeft: cgi > 0 ? SEP : 0,
                   borderLeft:
                     cgi > 0
-                      ? `${SEP}px solid rgba(255,255,255,0.13)`
+                      ? `${SEP}px solid var(--bd-strong)`
                       : undefined,
                 }}
               >
@@ -717,7 +717,7 @@ export default function DeductionGrid({
                         cursor: "default",
                         borderLeft:
                           ci > 0
-                            ? "1px solid rgba(255,255,255,0.07)"
+                            ? "1px solid var(--bd)"
                             : undefined,
                       }}
                     >
@@ -739,7 +739,7 @@ export default function DeductionGrid({
                 display: "flex",
                 marginTop: rgi > 0 ? SEP : 0,
                 borderTop:
-                  rgi > 0 ? `${SEP}px solid rgba(255,255,255,0.13)` : undefined,
+                  rgi > 0 ? `${SEP}px solid var(--bd-strong)` : undefined,
               }}
             >
               {/* Category label strip */}
@@ -759,7 +759,7 @@ export default function DeductionGrid({
                     fontWeight: 700,
                     letterSpacing: "0.14em",
                     textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.18)",
+                    color: "var(--text-lo)",
                     writingMode: "vertical-rl",
                     transform: "rotate(180deg)",
                     whiteSpace: "nowrap",
@@ -785,7 +785,7 @@ export default function DeductionGrid({
                         height: CELL,
                         borderTop:
                           ri > 0
-                            ? "1px solid rgba(255,255,255,0.07)"
+                            ? "1px solid var(--bd)"
                             : undefined,
                       }}
                     >
@@ -827,7 +827,7 @@ export default function DeductionGrid({
                               marginLeft: cgi > 0 ? SEP : 0,
                               borderLeft:
                                 cgi > 0
-                                  ? `${SEP}px solid rgba(255,255,255,0.13)`
+                                  ? `${SEP}px solid var(--bd-strong)`
                                   : undefined,
                             }}
                           >
@@ -836,7 +836,7 @@ export default function DeductionGrid({
                                 style={{
                                   width: cg.items.length * CELL,
                                   height: CELL,
-                                  background: "rgba(0,0,0,0.55)",
+                                  background: "var(--cell-blank)",
                                 }}
                               />
                             ) : (
@@ -855,7 +855,7 @@ export default function DeductionGrid({
                                       ? "rgba(168,85,247,0.12)"
                                       : state === "suspicion"
                                         ? "rgba(249,115,22,0.12)"
-                                        : "rgba(255,255,255,0.015)";
+                                        : "transparent";
                                 return (
                                   <button
                                     key={colItem.name}
@@ -871,7 +871,7 @@ export default function DeductionGrid({
                                             ? "rgba(34,197,94,0.26)"
                                             : state === "suspicion"
                                               ? "rgba(249,115,22,0.22)"
-                                              : "rgba(255,255,255,0.08)";
+                                              : "var(--bd)";
                                     }}
                                     onMouseLeave={(e) => {
                                       (
@@ -888,7 +888,7 @@ export default function DeductionGrid({
                                       border: "none",
                                       borderLeft:
                                         ci > 0
-                                          ? "1px solid rgba(255,255,255,0.07)"
+                                          ? "1px solid var(--bd)"
                                           : undefined,
                                       cursor: disabled || state === "x_auto" ? "default" : "pointer",
                                       outline: "none",

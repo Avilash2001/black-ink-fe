@@ -34,7 +34,7 @@ export default function LoginPage() {
                 Black Ink
               </p>
               <h1 className="text-3xl font-bold tracking-tight">Welcome back</h1>
-              <p className="text-sm text-[oklch(0.50_0_0)]">
+              <p className="text-sm text-[var(--text-lo)]">
                 Continue your adventure
               </p>
             </div>
@@ -44,14 +44,14 @@ export default function LoginPage() {
                 placeholder="you@example.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/9%)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
+                className="h-11 bg-[var(--inp-bg)] border-[var(--bd)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
               />
               <Input
                 type="password"
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="h-11 bg-[oklch(1_0_0/5%)] border-[oklch(1_0_0/9%)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
+                className="h-11 bg-[var(--inp-bg)] border-[var(--bd)] focus-visible:border-[oklch(0.79_0.165_78/55%)] focus-visible:ring-[oklch(0.79_0.165_78/18%)]"
               />
             </div>
 
@@ -77,7 +77,7 @@ export default function LoginPage() {
               {loading ? "Signing in…" : "Sign In"}
             </Button>
 
-            <p className="text-sm text-[oklch(0.45_0_0)] text-center">
+            <p className="text-sm text-[var(--text-lo)] text-center">
               New here?{" "}
               <Link
                 href="/register"

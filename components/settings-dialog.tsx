@@ -10,6 +10,7 @@ import {
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth-context";
+import { Sun, Moon } from "lucide-react";
 
 export default function SettingsDialog({
   open,
@@ -18,7 +19,7 @@ export default function SettingsDialog({
   open: boolean;
   onClose: () => void;
 }) {
-  const { user, updateMatureContent, setDateOfBirth } = useAuth();
+  const { user, updateMatureContent, setDateOfBirth, updateTheme } = useAuth();
 
   // DOB gate modal state
   const [dobModalOpen, setDobModalOpen] = useState(false);
@@ -86,11 +87,35 @@ export default function SettingsDialog({
               />
             </div>
 
-            <p className="text-sm text-neutral-400">
+            <p className="text-sm text-[var(--text-lo)]">
               When enabled, stories and mysteries may include explicit language,
               graphic violence, gore, and sexual themes. Age verification
               required on first enable.
             </p>
+
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <Label htmlFor="theme">Theme</Label>
+                <p className="text-xs text-[var(--text-dim)]">
+                  {user?.theme === 'light' ? 'Light mode' : 'Dark mode'}
+                </p>
+              </div>
+              <button
+                onClick={() => updateTheme(user?.theme === 'dark' ? 'light' : 'dark')}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-semibold transition-all duration-200"
+                style={{
+                  background: "var(--inp-bg)",
+                  borderColor: "var(--bd)",
+                  color: "var(--text-mid)",
+                }}
+              >
+                {user?.theme === 'light' ? (
+                  <><Moon size={13} /> Dark</>
+                ) : (
+                  <><Sun size={13} /> Light</>
+                )}
+              </button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
@@ -104,10 +129,10 @@ export default function SettingsDialog({
 
           <div className="space-y-5">
             <div className="rounded-lg border border-[oklch(0.55_0.18_27/30%)] bg-[oklch(0.35_0.12_27/10%)] px-4 py-3 space-y-1.5">
-              <p className="text-sm font-semibold text-[oklch(0.75_0.15_27)]">
+              <p className="text-sm font-semibold text-[oklch(0.65_0.18_27)]">
                 This is permanent and cannot be changed.
               </p>
-              <p className="text-xs text-[oklch(0.55_0_0)] leading-relaxed">
+              <p className="text-xs text-[var(--text-lo)] leading-relaxed">
                 Your date of birth will be saved to your account to verify you
                 are 18 or older. Once set, it cannot be modified. By continuing
                 you confirm this is your real date of birth.
@@ -116,7 +141,7 @@ export default function SettingsDialog({
 
             <form onSubmit={handleDobSubmit} className="space-y-4">
               <div className="space-y-1.5">
-                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[oklch(0.42_0_0)]">
+                <label className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[var(--text-dim)]">
                   Date of Birth
                 </label>
                 <input
@@ -127,10 +152,10 @@ export default function SettingsDialog({
                   max={new Date().toISOString().split("T")[0]}
                   className={[
                     "w-full rounded-lg px-3.5 py-2.5 text-sm border transition-colors",
-                    "bg-[oklch(0.10_0.01_65)] border-[oklch(1_0_0/10%)]",
-                    "text-[oklch(0.88_0.005_74)]",
+                    "bg-[var(--inp-bg)] border-[var(--bd)]",
+                    "text-[var(--text-hi)]",
                     "focus:outline-none focus:border-[oklch(0.79_0.165_78/40%)]",
-                    "[&::-webkit-calendar-picker-indicator]:invert [&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:cursor-pointer",
+                    "dark:[&::-webkit-calendar-picker-indicator]:invert dark:[&::-webkit-calendar-picker-indicator]:opacity-60 [&::-webkit-calendar-picker-indicator]:cursor-pointer",
                   ].join(" ")}
                 />
               </div>
@@ -144,7 +169,7 @@ export default function SettingsDialog({
                   type="button"
                   onClick={() => setDobModalOpen(false)}
                   disabled={dobSaving}
-                  className="flex-1 py-2.5 text-sm rounded-lg border border-[oklch(1_0_0/10%)] text-[oklch(0.50_0_0)] hover:text-[oklch(0.70_0_0)] transition-colors"
+                  className="flex-1 py-2.5 text-sm rounded-lg border border-[var(--bd)] text-[var(--text-lo)] hover:text-[var(--text-mid)] transition-colors"
                 >
                   Cancel
                 </button>
@@ -154,7 +179,7 @@ export default function SettingsDialog({
                   className={[
                     "flex-1 py-2.5 text-sm font-semibold rounded-lg border transition-all",
                     !dob || dobSaving
-                      ? "bg-[oklch(0.14_0.02_78/50%)] border-[oklch(0.79_0.165_78/10%)] text-[oklch(0.45_0_0)] cursor-not-allowed"
+                      ? "bg-[oklch(0.79_0.165_78/8%)] border-[oklch(0.79_0.165_78/10%)] text-[var(--text-lo)] cursor-not-allowed"
                       : "bg-[oklch(0.22_0.04_78)] border-[oklch(0.79_0.165_78/30%)] text-[oklch(0.79_0.165_78)] hover:bg-[oklch(0.28_0.05_78)]",
                   ].join(" ")}
                 >
